@@ -9,8 +9,8 @@ def conexion():
 
 
 def crear_tablas(con, cur):
-    cur.execute("CREATE TABLE cancion (ID integer PRIMARY KEY AUTOINCREMENT, Nombre text, Genero text, Album text, Interprete text)")
-    cur.execute("CREATE TABLE usuario (ID integer PRIMARY KEY AUTOINCREMENT, Cedula integer, Nombre text, Apellido text, Pais text, Ciudad text, Telefono integer, FechaPago text, TDD integer, Pago integer)")
+    cur.execute("CREATE TABLE IF NOT EXISTS cancion (ID integer PRIMARY KEY AUTOINCREMENT, Nombre text, Genero text, Album text, Interprete text)")
+    cur.execute("CREATE TABLE IF NOT EXISTS usuario (ID integer PRIMARY KEY AUTOINCREMENT, Cedula integer, Nombre text, Apellido text, Pais text, Ciudad text, Telefono integer, FechaPago text, TDD integer, Pago integer)")
     con.commit()
 
 
@@ -53,7 +53,7 @@ def insertar_tabla_usuario (con, cur, usuario):
 #         print("La información es: ",numero," ",nombre," ",album)
 #         print("La informacion de la tupla es: ")
 #         print(row)
-
+# hola
 
 if __name__ == "__main__":
     con = conexion()
