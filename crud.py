@@ -14,7 +14,7 @@ def crear_tablas(con, cur):
     cur.execute('''CREATE TABLE IF NOT EXISTS cancion (
         codigo INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
-        urlCancion TEXT NOT NULL,
+        ubicacion TEXT NOT NULL,
         genero TEXT,
         album TEXT,
         interprete TEXT
@@ -28,8 +28,8 @@ def crear_tablas(con, cur):
         pais TEXT,
         ciudad TEXT,
         telefono INTEGER,
-        fechaPago TEXT,
         targetaCredito INTEGER,
+        fechaPago TEXT,
         pago INTEGER
         )''')
 
@@ -37,7 +37,8 @@ def crear_tablas(con, cur):
         codigo INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
         valor float,
-        cantidad INTEGER
+        cantidad INTEGER,
+        decripcion TEXT
         )''')
 
     cur.execute('''CREATE TABLE IF NOT EXISTS subscripciones (
@@ -80,7 +81,7 @@ def insertar_clientes(con, cur, clientes):
 
 
 def insertar_plan(con, cur, plan):
-    cur.execute("INSERT INTO planes VALUES (?, ?, ?, ?)", plan)
+    cur.execute("INSERT INTO planes VALUES (?, ?, ?, ?, ?)", plan)
     con.commit()
 
 
@@ -94,36 +95,101 @@ def agregar_cancion(con, cur, datos):
     con.commit()
 
 
-# Codigo aun no adaptado
+# Funciones para hacer consultas
+def consulta_canciones(cur):
+    cur.execute("SELECT * FROM cancion")
+    return cur.fetchall()
 
-# def actualizar_tabla(con):
-#     cursorObj=con.cursor()
-#     nombre=input("Nombre: ")
-#     actualizar='UPDATE cancion set Nombre = "'+nombre+'"'
-#     print("La cadena es: ",actualizar)
-#     cursorObj.execute(actualizar)
-#     con.commit()
 
-# def consulta_individual(con,cod):
-#     cursorObj=con.cursor()
-#     cursorObj.execute('SELECT ID, Nombre FROM cancion WHERE ID = "'+cod+'"')
-#     filas=cursorObj.fetchall()
-#     print("Veremos: ",len(filas)," filas.")
-#     for row in filas:
-#         print (row)
+def buscar_cancion(cur, nombre):
+    cur.execute("SELECT * FROM cancion WHERE nombre = ?", (nombre))
+    return cur.fetchall()
 
-# def consulta_general(con):
-#     cursorObj=con.cursor()
-#     cursorObj.execute("SELECT * FROM cancion")
-#     filas=cursorObj.fetchall()
-#     print("La información extrída es: ")
-#     for row in filas:
-#         numero=row[0]
-#         nombre=row[1]
-#         album=row[2]
-#         print("La información es: ",numero," ",nombre," ",album)
-#         print("La informacion de la tupla es: ")
-#         print(row)
+
+def consulta_clientes(cur):
+    cur.execute("SELECT * FROM cliente")
+    return cur.fetchall()
+
+
+def buscar_cliente(cur, cedula):
+    cur.execute("SELECT * FROM cliente WHERE cedula = ?", (cedula))
+    return cur.fetchall()
+
+
+def consulta_planes(cur):
+    cur.execute("SELECT * FROM planes")
+    return cur.fetchall()
+
+
+def buscar_plan(cur, codigo):
+    cur.execute("SELECT * FROM planes WHERE codigo = ?", (codigo))
+    return cur.fetchall()
+
+
+def consulta_subscripciones(cur):
+    cur.execute("SELECT * FROM subscripciones")
+    return cur.fetchall()
+
+
+def buscar_subscripcion(cur, cedula):
+    cur.execute("SELECT * FROM planes WHERE cedulaCliente = ?", (cedula))
+    return cur.fetchall()
+
+
+def consulta_listas(cur):
+    cur.execute("SELECT * FROM listaCanciones")
+    return cur.fetchall()
+
+
+def buscar_lista(cur, nombre, cedula):
+    cur.execute("SELECT * FROM listaCanciones WHERE nombreLista = ? AND cedulaCliente", (nombre, cedula))
+    return cur.fetchall()
+
+
+# Funciones actualizar datos
+def actualizar_cancion(con, cur, valores):
+    cur.execute('''
+        UPDATE cancion
+        SET nombre = ?,
+        ubicacion = ?,
+        genero = ?,
+        album = ?,
+        interprete = ?
+        WHERE codigo = ?''', valores)
+    con.commit()
+
+
+def actualizar_cliente(con, cur, valores):
+    cur.execute('''
+        UPDATE cliente
+        nombre = ?,
+        apellido = ?,
+        correo = ?,
+        pais = ?,
+        ciudad = ?,
+        telefono = ?,
+        targetaCredito = ?
+        WHERE cedula = ?''', valores)
+    con.commit()
+
+
+def actualizar_pago(con, cur, cedula, fecha):
+    cur.execute('''
+        UPDATE cliente
+        fechaPago = ?,
+        pago = 1
+        WHERE cedula = ?''', (fecha, cedula))
+    con.commit()
+
+
+def actualizar_cliente(con, cur, valores):
+    cur.execute('''
+        nombre = ?,
+        valor = ?,
+        cantidad = ?,
+        decripcion = ?
+        WHERE codigo = ?''', valores)
+    con.commit()
 
 
 if __name__ == "__main__":
