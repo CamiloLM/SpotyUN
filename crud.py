@@ -34,8 +34,7 @@ def crear_tablas(con, cur):
         )''')
 
     cur.execute('''CREATE TABLE IF NOT EXISTS planes (
-        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL,
+        nombre TEXT PRIMARY KEY,
         valor float,
         cantidad INTEGER,
         decripcion TEXT
@@ -43,8 +42,8 @@ def crear_tablas(con, cur):
 
     cur.execute('''CREATE TABLE IF NOT EXISTS subscripciones (
         cedulaCliente INTEGER,
-        codigoPlan INTEGER,
-        FOREIGN KEY (codigoPlan) REFERENCES planes (codigo),
+        nombrePlan INTEGER,
+        FOREIGN KEY (nombrePlan) REFERENCES planes (nombre),
         FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula)
         )''')
     
@@ -81,7 +80,12 @@ def insertar_clientes(con, cur, clientes):
 
 
 def insertar_plan(con, cur, plan):
-    cur.execute("INSERT INTO planes VALUES (?, ?, ?, ?, ?)", plan)
+    cur.execute("INSERT INTO planes VALUES (?, ?, ?, ?)", plan)
+    con.commit()
+
+
+def insertar_planes(con, cur, plan):
+    cur.executemany("INSERT INTO planes VALUES (?, ?, ?, ?)", plan)
     con.commit()
 
 
@@ -122,7 +126,7 @@ def consulta_planes(cur):
 
 
 def buscar_plan(cur, codigo):
-    cur.execute("SELECT * FROM planes WHERE codigo = ?", (codigo))
+    cur.execute("SELECT * FROM planes WHERE nombre = ?", (codigo))
     return cur.fetchall()
 
 
@@ -196,6 +200,6 @@ if __name__ == "__main__":
     con = conexion()
     cur = con.cursor()
 
-    crear_tablas(con, cur)
+
 
     con.close()
