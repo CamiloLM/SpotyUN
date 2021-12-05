@@ -9,6 +9,7 @@ def conexion():
         print(sqlite3.Error)
 
 
+# Funcion generadora de tablas
 def crear_tablas(con, cur):
     cur.execute('''CREATE TABLE IF NOT EXISTS cancion (
         codigo INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,16 +41,16 @@ def crear_tablas(con, cur):
         )''')
 
     cur.execute('''CREATE TABLE IF NOT EXISTS subscripciones (
-        codigoPlan INTEGER,
         cedulaCliente INTEGER,
+        codigoPlan INTEGER,
         FOREIGN KEY (codigoPlan) REFERENCES planes (codigo),
         FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula)
         )''')
     
     cur.execute('''CREATE TABLE IF NOT EXISTS listaCanciones (
-        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-        codigoCancion INTEGER,
+        nombreLista TEXT NOT NULL,
         cedulaCliente INTEGER,
+        codigoCancion INTEGER,
         FOREIGN KEY (codigoCancion) REFERENCES cancion (codigo),
         FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula)
         )''')
@@ -57,14 +58,41 @@ def crear_tablas(con, cur):
     con.commit()
 
 
-# def insertar_tabla_cancion (con, cur, cancion):
-#     cur.execute('''INSERT INTO cancion VALUES (?,?,?,?,?)''', cancion)
-#     con.commit()
+# Funciones para agregar datos a las tablas
+def insertar_cancion(con, cur, cancion):
+    cur.execute("INSERT INTO cancion VALUES (?, ?, ?, ?, ?, ?)", cancion)
+    con.commit()
 
 
-# def insertar_tabla_usuario (con, cur, usuario):
-#     cur.execute('''INSERT INTO usuario VALUES (?,?,?,?,?,?,?,?,?)''', usuario)
-#     con.commit()
+def insertar_canciones(con, cur, canciones):
+    cur.executemany("INSERT INTO cancion VALUES (?, ?, ?, ?, ?, ?)", canciones)
+    con.commit()
+
+
+def insertar_cliente(con, cur, cliente):
+    cur.execute("INSERT INTO cliente VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", cliente)
+    con.commit()
+
+
+def insertar_clientes(con, cur, clientes):
+    cur.executemany("INSERT INTO cliente VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", clientes)
+    con.commit()
+
+
+def insertar_plan(con, cur, plan):
+    cur.execute("INSERT INTO planes VALUES (?, ?, ?, ?)", plan)
+    con.commit()
+
+
+def agregar_subscripcion(con, cur, datos):
+    cur.execute("INSERT INTO subscripciones VALUES (?, ?)", datos)
+    con.commit()
+
+
+def agregar_cancion(con, cur, datos):
+    cur.execute("INSERT INTO listaCanciones VALUES (?, ?, ?)", datos)
+    con.commit()
+
 
 # Codigo aun no adaptado
 
@@ -96,10 +124,12 @@ def crear_tablas(con, cur):
 #         print("La información es: ",numero," ",nombre," ",album)
 #         print("La informacion de la tupla es: ")
 #         print(row)
-# hola
+
 
 if __name__ == "__main__":
     con = conexion()
     cur = con.cursor()
+
     crear_tablas(con, cur)
+
     con.close()
