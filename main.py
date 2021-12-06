@@ -1,8 +1,10 @@
 import crud
 from time import sleep
+from player import reproductor
 
+'''
 print("╔" + "═"*34 + "╗")
-print("║ Bienvenido al Programa SpotyUN. ║")
+print("║ Bienvenido al Programa SpotyUN.  ║")
 print("╚" + "═"*34 + "╝\n")
 
 while True:
@@ -14,6 +16,7 @@ while True:
 
     if case == "1":
         print("Ingrese el documento del administrador")
+        
         
 
     elif case == "2":
@@ -81,3 +84,6 @@ while True:
 
 #     crud.insertar_tabla_cancion(miCon, ObjCur, cancion)
 #     crud.insertar_tabla_usuario(miCon, ObjCur, usuario)
+'''
+codcan=input("Código de la canción: ")
+reproductor(codcan)
