@@ -1,20 +1,21 @@
 import sqlite3
-from crud import buscar_cliente, insertar_cliente
+from crud.read import buscar_cliente
+from crud.insert import insertar_cliente
+from cliente import cliente_logueado
+from admin import admin_logueado
 from time import sleep
-from player import reproductor
 
 
 def conexion():
     try:
         con = sqlite3.connect('SpotyUN.db')
-        con.execute("PRAGMA foreign_keys = 1")
         return con
     except sqlite3.Error:
         print(sqlite3.Error)
 
 
 def conexion_administrador():
-    # con = conexion()
+    con = conexion()
     # cur = con.cursor()
     print("Ingrese el documento del administrador")
     entrada = input()
@@ -24,21 +25,22 @@ def conexion_administrador():
     entrada = input()
     entrada = int(entrada)
     print("Validando informacion...")
-    datos = []
+    datos = [] # CRUD de administrador
     if datos is not None:
         # Iniciar sesion de administrador
         pass
     else:
         print("Administrador no registrado. Verifique el numero de identificación")
         print("Volviendo al menu principal.")
+        con.close()
 
 
 def conexion_cliente():
     con = conexion()
     cur = con.cursor()
     print("Seleccione la opcion de ingreso:")
-    print("\t1. Ingresar con una cuenta ya registrada.")
-    print("\t2. Crear una cuenta nueva.")
+    print("1. Ingresar con una cuenta ya registrada.")
+    print("2. Crear una cuenta nueva.")
     opcion = input()
 
     if opcion == "1":
@@ -47,37 +49,38 @@ def conexion_cliente():
         while not entrada.isdecimal():
             print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
             print("Intentelo nuevamente:")
-        entrada = input()
         entrada = int(entrada)
         print("Validando informacion...")
         datos = buscar_cliente(cur, entrada)
         if datos is not None:
-            # Iniciar sesion de cliente
-            pass
+            cliente_logueado(con, cur, datos)
+            con.close()
         else:
             print("Cliente no registrado. Verifique el numero de identificación")
             print("Volviendo al menu principal.")
+            con.close()
             
     elif opcion == "2":
-        datos = []
         cedula = input("Ingrese su numero de cedula: ")
         nombre = input("Ingrese su nombre: ")
         apellido = input("Ingrese su apellido: ")
-        correo = input("Ingrese su correo: ")
+        correo = input("Ingrese su correo electronico: ")
         
-        print(correo)
         if cedula.isdecimal() and nombre.isalpha() and apellido.isalpha() and bool(correo):
-            datos.extend([int(cedula), nombre, apellido, correo, None, None, None, None, None, 0])
+            datos = [int(cedula), nombre, apellido, correo, None, None, None, None, None, 0]
             insertar_cliente(con, cur, datos)
             print("Cliente registrado satisfactoriamente")
             del cedula, nombre, apellido, correo
-            # Iniciar Sesion Cliente
+            cliente_logueado(con, cur, datos)
+            con.close()
         else:
             print("Alguno de los datos se ingresaron incorrectamente.")
             print("Volviendo al menu principal.")
+            con.close()
             
     else:
         print("Entrada incorrecta volviendo al menu principal.")
+        con.close()
 
 
 if __name__ == "__main__":
@@ -88,9 +91,9 @@ if __name__ == "__main__":
 
     while True:
         print("Seleccione la opcion que desea realizar:")
-        print("\t1. Ingresar como Administrador.")
-        print("\t2. Ingresar como Cliente.")
-        print("\t3. Salir del programa.")
+        print("1. Ingresar como Administrador.")
+        print("2. Ingresar como Cliente.")
+        print("3. Salir del programa.")
         case = input()
 
         if case == "1":
@@ -106,5 +109,3 @@ if __name__ == "__main__":
 
         else:
             print("Entrada incorrecta. Intente otra vez.")
-    codcan=input("Código de la canción: ")
-    reproductor(codcan)
