@@ -119,7 +119,7 @@ def consulta_clientes(cur):
 def buscar_cliente(cur, cedula):
     datos = [cedula]
     cur.execute("SELECT * FROM cliente WHERE cedula = ?", datos)
-    return cur.fetchall()
+    return cur.fetchone()
 
 
 def consulta_planes(cur):
@@ -130,7 +130,7 @@ def consulta_planes(cur):
 def buscar_plan(cur, nombre):
     datos = [nombre]
     cur.execute("SELECT * FROM planes WHERE nombre = ?", datos)
-    return cur.fetchall()
+    return cur.fetchone()
 
 
 def consulta_subscripciones(cur):
@@ -141,7 +141,7 @@ def consulta_subscripciones(cur):
 def buscar_subscripcion(cur, cedula):
     datos = [cedula]
     cur.execute("SELECT * FROM subscripciones WHERE cedulaCliente = ?", datos)
-    return cur.fetchall()
+    return cur.fetchone()
 
 
 def consulta_general_listas(cur):

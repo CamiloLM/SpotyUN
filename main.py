@@ -1,83 +1,107 @@
-import crud
+import sqlite3
+from crud import buscar_cliente, insertar_cliente
 from time import sleep
 
-print("╔" + "═"*34 + "╗")
-print("║ Bienvenido al Programa SpotyUN. ║")
-print("╚" + "═"*34 + "╝\n")
 
-while True:
-    print("Seleccione la opcion que desea realizar:")
-    print("\t1. Ingresar como Administrador.")
-    print("\t2. Ingresar como Cliente.")
-    print("\t3. Salir del programa.")
-    case = input()
+def conexion():
+    try:
+        con = sqlite3.connect('SpotyUN.db')
+        con.execute("PRAGMA foreign_keys = 1")
+        return con
+    except sqlite3.Error:
+        print(sqlite3.Error)
 
-    if case == "1":
-        print("Ingrese el documento del administrador")
-        
 
-    elif case == "2":
-        print("Ingrese el documento del cliente")
-
-    elif case == "3":
-        print("Hasta Luego.")
-        sleep(1)
-        break
-
+def conexion_administrador():
+    # con = conexion()
+    # cur = con.cursor()
+    print("Ingrese el documento del administrador")
+    entrada = input()
+    while not entrada.isdecimal():
+        print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
+        print("Intentelo nuevamente:")
+    entrada = input()
+    entrada = int(entrada)
+    print("Validando informacion...")
+    datos = []
+    if datos is not None:
+        # Iniciar sesion de administrador
+        pass
     else:
-        print("Entrada incorrecta. Intente otra vez.")
+        print("Administrador no registrado. Verifique el numero de identificación")
+        print("Volviendo al menu principal.")
 
 
-# def leer_info_cancion():
-#     id=input("Código identificador: ")
-#     cmax=12
-#     fc='0'
-#     fc1=' '
-#     id=id.ljust(cmax,fc)
-#     nombre=input("Nombre: ")
-#     nombre=nombre.ljust(cmax,fc1)
-#     genero=input("Género: ")
-#     genero=genero.ljust(cmax,fc1)
-#     album=input("Álbum: ")
-#     album=album.ljust(cmax,fc1)
-#     interprete=input("Intérprete: ")
-#     interprete=interprete.ljust(cmax,fc1)
-#     cancion=(id,nombre,genero,album,interprete)
-#     return cancion
+def conexion_cliente():
+    con = conexion()
+    cur = con.cursor()
+    print("Seleccione la opcion de ingreso:")
+    print("\t1. Ingresar con una cuenta ya registrada.")
+    print("\t2. Crear una cuenta nueva.")
+    opcion = input()
+
+    if opcion == "1":
+        print("Ingrese el documento del cliente")
+        entrada = input()
+        while not entrada.isdecimal():
+            print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
+            print("Intentelo nuevamente:")
+        entrada = input()
+        entrada = int(entrada)
+        print("Validando informacion...")
+        datos = buscar_cliente(cur, entrada)
+        if datos is not None:
+            # Iniciar sesion de cliente
+            pass
+        else:
+            print("Cliente no registrado. Verifique el numero de identificación")
+            print("Volviendo al menu principal.")
+            
+    elif opcion == "2":
+        datos = []
+        cedula = input("Ingrese su numero de cedula: ")
+        nombre = input("Ingrese su nombre: ")
+        apellido = input("Ingrese su apellido: ")
+        correo = input("Ingrese su correo: ")
+        
+        print(correo)
+        if cedula.isdecimal() and nombre.isalpha() and apellido.isalpha() and bool(correo):
+            datos.extend([int(cedula), nombre, apellido, correo, None, None, None, None, None, 0])
+            insertar_cliente(con, cur, datos)
+            print("Cliente registrado satisfactoriamente")
+            del cedula, nombre, apellido, correo
+            # Iniciar Sesion Cliente
+        else:
+            print("Alguno de los datos se ingresaron incorrectamente.")
+            print("Volviendo al menu principal.")
+            
+    else:
+        print("Entrada incorrecta volviendo al menu principal.")
 
 
-# def leer_info_usuario():
-#     id=input("Documento de Identificación: ")
-#     cmax1=10
-#     cmax2=16
-#     cmax=12
-#     fc=' '
-#     id=id.ljust(cmax1)
-#     nombre=input("Nombre: ")
-#     nombre=nombre.ljust(cmax,fc)
-#     apellido=input("Apellido: ")
-#     apellido=apellido.ljust(cmax,fc)
-#     pais=input("Pais: ")
-#     pais=pais.ljust(cmax,fc)
-#     ciudad=input("Ciudad: ")
-#     ciudad=ciudad.ljust(cmax,fc)
-#     telefono=input("Teléfono: ")
-#     telefono=telefono.ljust(cmax1)
-#     fechapago=date.today()
-#     fechapago = fechapago + timedelta(days=30)
-#     tarjeta=input("Tarjeta de Crédito: ")
-#     tarjeta=tarjeta.ljust(cmax2)
-#     pago=input("Pagó (Yes/No): ")
-#     usuario=(id,nombre,apellido,pais,ciudad,telefono,fechapago,tarjeta,pago)
-#     return usuario
+if __name__ == "__main__":
 
+    print("╔" + "═"*32 + "╗")
+    print("║ Bienvenido al Programa SpotyUN ║")
+    print("╚" + "═"*32 + "╝\n")
 
-# Este bloque solo se ejecuta cuando se corre este archivo, si es importado no corre
-# if __name__ == "__main__":
-#     miCon = crud.conexion()
-#     ObjCur= miCon.cursor()
-#     usuario = leer_info_usuario()
-#     cancion = leer_info_cancion
+    while True:
+        print("Seleccione la opcion que desea realizar:")
+        print("\t1. Ingresar como Administrador.")
+        print("\t2. Ingresar como Cliente.")
+        print("\t3. Salir del programa.")
+        case = input()
 
-#     crud.insertar_tabla_cancion(miCon, ObjCur, cancion)
-#     crud.insertar_tabla_usuario(miCon, ObjCur, usuario)
+        if case == "1":
+            conexion_administrador()
+
+        elif case == "2":
+            conexion_cliente()
+        
+        elif case == "3":
+            print("Hasta Luego.")
+            sleep(1)
+            break
+
+        else:
+            print("Entrada incorrecta. Intente otra vez.")
