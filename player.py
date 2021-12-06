@@ -1,26 +1,27 @@
 # Este archivo maneja las operaciones para la reproduccion del audio
-from pygame import mixer
+#la libreria pygame se instala en el simbolo del sistema ingresando el siguiente comando: py -m pip install -U pygame --user
+from pygame import mixer    #importa la función mixer (reproductor) de la libreria Pygame
 
-def existencia (filePath):
+def existencia (filePath):  #función que comprueba la existencia del archivo .mp3 en el repositorio
     try:
         with open(filePath, 'r') as f:
             return True
-    except FileNotFoundError as e:
+    except FileNotFoundError as e:  #Si no encuentra el archivo envia un False
         return False
-    except IOError as e:
+    except IOError as e:    #Si no encuentra el archivo envia un False
         return False
 
 def reproductor(cancion):
-    mixer.init()
-    cancion="canciones/"+cancion+".mp3"
-    while existencia(cancion)==False:
+    mixer.init()    #Inicia la función mixer de la libreria Pygame
+    cancion="canciones/"+cancion+".mp3"     #Busca la canción en el repositorio en base a su código
+    while existencia(cancion)==False:   
         cancion=input("Inserte un código valido: ")
         cancion="canciones/"+cancion+".mp3"
         if existencia(cancion)==True:
             break
-    mixer.music.load(cancion)
-    mixer.music.set_volume(0.7)
-    mixer.music.play()
+    mixer.music.load(cancion)   #carga la canción al mixer
+    mixer.music.set_volume(0.7) 
+    mixer.music.play()  #Reproduce la canción
 
     while True:
         print("Pulsar 'P' para pausar")
