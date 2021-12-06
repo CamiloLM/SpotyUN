@@ -1,6 +1,7 @@
 import sqlite3
 from crud import buscar_cliente, insertar_cliente
 from time import sleep
+from player import reproductor
 
 
 def conexion():
@@ -105,3 +106,5 @@ if __name__ == "__main__":
 
         else:
             print("Entrada incorrecta. Intente otra vez.")
+    codcan=input("Código de la canción: ")
+    reproductor(codcan)
