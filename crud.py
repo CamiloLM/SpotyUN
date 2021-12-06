@@ -106,7 +106,8 @@ def consulta_canciones(cur):
 
 
 def buscar_cancion(cur, nombre):
-    cur.execute("SELECT * FROM cancion WHERE nombre = ?", (nombre))
+    datos = [nombre + "%"]
+    cur.execute("SELECT * FROM cancion WHERE nombre LIKE ?", datos)
     return cur.fetchall()
 
 
@@ -116,7 +117,8 @@ def consulta_clientes(cur):
 
 
 def buscar_cliente(cur, cedula):
-    cur.execute("SELECT * FROM cliente WHERE cedula = ?", (cedula))
+    datos = [cedula]
+    cur.execute("SELECT * FROM cliente WHERE cedula = ?", datos)
     return cur.fetchall()
 
 
@@ -125,8 +127,9 @@ def consulta_planes(cur):
     return cur.fetchall()
 
 
-def buscar_plan(cur, codigo):
-    cur.execute("SELECT * FROM planes WHERE nombre = ?", (codigo))
+def buscar_plan(cur, nombre):
+    datos = [nombre]
+    cur.execute("SELECT * FROM planes WHERE nombre = ?", datos)
     return cur.fetchall()
 
 
@@ -136,17 +139,25 @@ def consulta_subscripciones(cur):
 
 
 def buscar_subscripcion(cur, cedula):
-    cur.execute("SELECT * FROM planes WHERE cedulaCliente = ?", (cedula))
+    datos = [cedula]
+    cur.execute("SELECT * FROM subscripciones WHERE cedulaCliente = ?", datos)
     return cur.fetchall()
 
 
-def consulta_listas(cur):
+def consulta_general_listas(cur):
     cur.execute("SELECT * FROM listaCanciones")
     return cur.fetchall()
 
 
+def consulta_usuario_listas(cur, cedula):
+    datos = [cedula]
+    cur.execute("SELECT DISTINCT nombreLista FROM listaCanciones WHERE cedulaCliente = ?", datos)
+    return cur.fetchall()
+
+
 def buscar_lista(cur, nombre, cedula):
-    cur.execute("SELECT * FROM listaCanciones WHERE nombreLista = ? AND cedulaCliente", (nombre, cedula))
+    datos = [nombre, cedula]
+    cur.execute("SELECT * FROM listaCanciones WHERE nombreLista LIKE ? AND cedulaCliente = ?", datos)
     return cur.fetchall()
 
 
@@ -166,7 +177,7 @@ def actualizar_cancion(con, cur, valores):
 def actualizar_cliente(con, cur, valores):
     cur.execute('''
         UPDATE cliente
-        nombre = ?,
+        SET nombre = ?,
         apellido = ?,
         correo = ?,
         pais = ?,
@@ -177,29 +188,30 @@ def actualizar_cliente(con, cur, valores):
     con.commit()
 
 
-def actualizar_pago(con, cur, cedula, fecha):
+def actualizar_pago(con, cur, fecha, cedula):
+    datos = [fecha, cedula]
     cur.execute('''
         UPDATE cliente
-        fechaPago = ?,
+        SET fechaPago = ?,
         pago = 1
-        WHERE cedula = ?''', (fecha, cedula))
+        WHERE cedula = ?''', datos)
     con.commit()
 
 
-def actualizar_cliente(con, cur, valores):
+def actualizar_plan(con, cur, valores):
     cur.execute('''
-        nombre = ?,
-        valor = ?,
+        UPDATE planes
+        SET valor = ?,
         cantidad = ?,
         decripcion = ?
-        WHERE codigo = ?''', valores)
+        WHERE nombre = ?''', valores)
     con.commit()
 
 
 if __name__ == "__main__":
     con = conexion()
     cur = con.cursor()
-
-
-
+    
+    
+    
     con.close()
