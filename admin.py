@@ -198,11 +198,11 @@ def insertar_datos(con, cur):
         select = input()
 
         if select == "1":
-            nombre = input("Ingrese nombre")
-            ubicacion = input("Ingrese ubicacion")
-            genero = input("Ingrese genero")
-            album = input("Ingrese album")
-            interprete = input("Ingrese interprete")
+            nombre = input("Ingrese nombre: ")
+            ubicacion = input("Ingrese ubicacion: ")
+            genero = input("Ingrese genero: ")
+            album = input("Ingrese album: ")
+            interprete = input("Ingrese interprete: ")
 
             datos = [None, nombre, ubicacion, genero, album, interprete]
             crud.insert.insertar_cancion(con, cur, datos)
@@ -247,6 +247,12 @@ def insertar_datos(con, cur):
 
             datos = [int(cedula), nombre, apellido, correo]
             crud.insert.insertar_admin(con, cur, datos)
+        
+        elif select == "0":
+            break
+
+        else:
+            print("Numero equivocado.")
 
 
 def admin_logueado(con, cur, data):
