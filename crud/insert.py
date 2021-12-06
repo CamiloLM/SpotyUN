@@ -36,3 +36,8 @@ def agregar_subscripcion(con, cur, datos):
 def agregar_cancion(con, cur, datos):
     cur.execute("INSERT INTO listaCanciones VALUES (?, ?, ?)", datos)
     con.commit()
+
+
+def insertar_admin(con, cur, datos):
+    cur.execute("INSERT INTO administrador VALUES (?, ?, ?, ?)", datos)
+    con.commit()

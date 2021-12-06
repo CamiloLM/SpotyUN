@@ -63,3 +63,14 @@ def buscar_lista(cur, nombre, cedula):
     datos = [nombre, cedula]
     cur.execute("SELECT * FROM listaCanciones WHERE nombreLista LIKE ? AND cedulaCliente = ?", datos)
     return cur.fetchall()
+
+
+def consulta_admins(cur):
+    cur.execute("SELECT * FROM administrador")
+    return cur.fetchall()
+
+
+def buscar_admin(cur, cedula):
+    datos = [cedula]
+    cur.execute("SELECT * FROM administrador WHERE cedula = ?", datos)
+    return cur.fetchone()

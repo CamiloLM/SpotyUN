@@ -6,7 +6,6 @@ from player import reproductor
 
 
 def cliente_logueado(con, cur, data):
-    # [1234567890, 'Camilo', 'Londoño', 'correo@gmail.com', None, None, None, None, None, 0]
     print(f"Bienvenido {data[1]} {data[2]}")
     while True:
         print("Seleccione la accion que desea realizar")

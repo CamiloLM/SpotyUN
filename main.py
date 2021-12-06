@@ -1,5 +1,5 @@
 import sqlite3
-from crud.read import buscar_cliente
+from crud.read import buscar_cliente, buscar_admin
 from crud.insert import insertar_cliente
 from cliente import cliente_logueado
 from admin import admin_logueado
@@ -16,19 +16,18 @@ def conexion():
 
 def conexion_administrador():
     con = conexion()
-    # cur = con.cursor()
+    cur = con.cursor()
     print("Ingrese el documento del administrador")
     entrada = input()
     while not entrada.isdecimal():
         print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
         print("Intentelo nuevamente:")
-    entrada = input()
     entrada = int(entrada)
     print("Validando informacion...")
-    datos = [] # CRUD de administrador
+    datos = buscar_admin(cur, entrada)
     if datos is not None:
-        # Iniciar sesion de administrador
-        pass
+        admin_logueado(con, cur, datos)
+        con.close()
     else:
         print("Administrador no registrado. Verifique el numero de identificación")
         print("Volviendo al menu principal.")

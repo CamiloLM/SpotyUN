@@ -1,57 +1,34 @@
 import sqlite3
-from insert import insertar_canciones, insertar_clientes, insertar_planes
+from insert import insertar_canciones, insertar_clientes, insertar_planes, insertar_admin
+
+
+def conexion():
+    try:
+        con = sqlite3.connect('SpotyUN.db')
+        return con
+    except sqlite3.Error:
+        print(sqlite3.Error)
 
 
 def crear_tablas(con, cur):
-    cur.execute('''CREATE TABLE IF NOT EXISTS cancion (
-        codigo INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL,
-        ubicacion TEXT NOT NULL,
-        genero TEXT,
-        album TEXT,
-        interprete TEXT
-        )''')
+    cur.execute("CREATE TABLE IF NOT EXISTS cancion (codigo INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT NOT NULL, ubicacion TEXT NOT NULL, genero TEXT, album TEXT, interprete TEXT)")
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS cliente (
-        cedula INTEGER PRIMARY KEY,
-        nombre TEXT NOT NULL,
-        apellido TEXT NOT NULL,
-        correo TEXT NOT NULL,
-        pais TEXT,
-        ciudad TEXT,
-        telefono INTEGER,
-        targetaCredito INTEGER,
-        fechaPago TEXT,
-        pago INTEGER
-        )''')
+    cur.execute("CREATE TABLE IF NOT EXISTS cliente (cedula INTEGER PRIMARY KEY, nombre TEXT NOT NULL, apellido TEXT NOT NULL, correo TEXT NOT NULL, pais TEXT, ciudad TEXT, telefono INTEGER, targetaCredito INTEGER, fechaPago TEXT, pago INTEGER)")
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS planes (
-        nombre TEXT PRIMARY KEY,
-        valor float,
-        cantidad INTEGER,
-        decripcion TEXT
-        )''')
+    cur.execute("CREATE TABLE IF NOT EXISTS planes (nombre TEXT PRIMARY KEY, valor float, cantidad INTEGER, decripcion TEXT)")
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS subscripciones (
-        cedulaCliente INTEGER,
-        nombrePlan INTEGER,
-        FOREIGN KEY (nombrePlan) REFERENCES planes (nombre),
-        FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula)
-        )''')
+    cur.execute("CREATE TABLE IF NOT EXISTS subscripciones (cedulaCliente INTEGER, nombrePlan INTEGER, FOREIGN KEY (nombrePlan) REFERENCES planes (nombre), FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula))")
     
-    cur.execute('''CREATE TABLE IF NOT EXISTS listaCanciones (
-        nombreLista TEXT NOT NULL,
-        cedulaCliente INTEGER,
-        codigoCancion INTEGER,
-        FOREIGN KEY (codigoCancion) REFERENCES cancion (codigo),
-        FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula)
-        )''')
+    cur.execute("CREATE TABLE IF NOT EXISTS listaCanciones (nombreLista TEXT NOT NULL, cedulaCliente INTEGER, codigoCancion INTEGER, FOREIGN KEY (codigoCancion) REFERENCES cancion (codigo), FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula))")
+    
+    cur.execute("CREATE TABLE IF NOT EXISTS administrador (cedula INTEGER PRIMARY KEY, nombre TEXT NOT NULL, apellido TEXT NOT NULL, correo TEXT NOT NULL)")
     
     con.commit()
 
+
 clientes = (
 	[
-		6512378532,
+		1231231230,
 		"Moses",
 		"White","urna.nunc@protonmail.couk",
 		"Netherlands",
@@ -317,19 +294,27 @@ canciones = (
 
 planes = (
 	["Gratis", None, 1, "Escucha música solo en modo aleatorio y con anuncios."],
-	["Individual", 14900.00, 1, "Escucha música sin anuncios. Reproduce tus canciones en cualquier lugar, incluso sin conexión. Prepaga o suscríbete por solo $ 14900.00 al mes"],
-	["Duo", 19900.00, 2, "Te damos 2 cuentas Premium perfecto parejas que conviven por $ 19900.00 al mes. Ademas te damos una lista para dos, actualizada periódicamente con la música que más les gusta."],
-	["Familiar", 23900.00, 6, "Te damos 6 cuentas Premium para familiares que conviven ademas con una lista para tu familia. Reproducción de música sin anuncios, sin conexión y on-demand. Prepaga o suscríbete $ 23900.00 al mes."]
+	["Individual", 14900.00, 1, "Escucha música sin anuncios.\nReproduce tus canciones en cualquier lugar, incluso sin conexión.\nPrepaga o suscríbete por solo $ 14900.00 al mes"],
+	["Duo", 19900.00, 2, "Te damos 2 cuentas Premium perfecto parejas que conviven por $ 19900.00 al mes.\nAdemas te damos una lista para dos,\nactualizada periódicamente con la música que más les gusta."],
+	["Familiar", 23900.00, 6, "Te damos 6 cuentas Premium para familiares que conviven ademas con una lista para tu familia.\nReproducción de música sin anuncios, sin conexión y on-demand.\nPrepaga o suscríbete $ 23900.00 al mes."]
 )
 
+admin = (
+	9876543210,
+	"Camilo",
+	"Londoño",
+	"admin@gmail.com"
+)
+
+
 if __name__ == "__main__":
-    con = sqlite3.connect('SpotyUN.db')
-    con.execute("PRAGMA foreign_keys = 1")
+    con = conexion()
     cur = con.cursor()
 
     crear_tablas(con, cur)
     insertar_clientes(con, cur, clientes)
     insertar_canciones(con, cur, canciones)   
     insertar_planes(con, cur, planes) 
-
+    insertar_admin(con, cur, admin) 
+	
     con.close()
