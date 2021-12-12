@@ -21,6 +21,7 @@ def conexion_administrador():
     entrada = input()
     while not entrada.isdecimal():
         print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
+        sleep(1)
         print("Intentelo nuevamente:")
         entrada = input()
     print("Validando informacion...")
@@ -42,48 +43,58 @@ def conexion_administrador():
 def conexion_cliente():
     con = conexion()
     cur = con.cursor()
-    print("Seleccione la opcion de ingreso:")
+    print("\nSeleccione la opcion de ingreso:")
     print("1. Ingresar con una cuenta ya registrada.")
     print("2. Crear una cuenta nueva.")
     opcion = input()
 
     if opcion == "1":
-        print("Ingrese el documento del cliente")
+        print("\nIngrese el documento del cliente")
         entrada = input()
         while not entrada.isdecimal():
             print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
+            sleep(1)
             print("Intentelo nuevamente:")
+            entrada = input()
         entrada = int(entrada)
         print("Validando informacion...")
+
+        # Busca en la base de datos al cliente
         datos = buscar_cliente(cur, entrada)
         if datos is not None:
             cliente_logueado(con, cur, datos)
             con.close()
         else:
-            print("Cliente no registrado. Verifique el numero de identificación")
-            print("Volviendo al menu principal.")
+            print("\nCliente no registrado. Verifique el numero de identificación")
+            print("Volviendo al menu principal.\n")
             con.close()
             
     elif opcion == "2":
-        cedula = input("Ingrese su numero de cedula: ")
+        cedula = input("\nIngrese su numero de cedula: ")
         nombre = input("Ingrese su nombre: ")
         apellido = input("Ingrese su apellido: ")
         correo = input("Ingrese su correo electronico: ")
         
+        # Verficacion de datos en la entrada
         if cedula.isdecimal() and nombre.isalpha() and apellido.isalpha() and bool(correo):
+            # Insercion del cliente en la base de datos
             datos = [int(cedula), nombre, apellido, correo, None, None, None, None, None, 0]
             insertar_cliente(con, cur, datos)
+
             print("Cliente registrado satisfactoriamente")
             del cedula, nombre, apellido, correo
+
             cliente_logueado(con, cur, datos)
             con.close()
         else:
-            print("Alguno de los datos se ingresaron incorrectamente.")
-            print("Volviendo al menu principal.")
+            print("\nAlguno de los datos se ingresaron incorrectamente.")
+            print("Volviendo al menu principal.\n")
+            sleep(2)
             con.close()
             
     else:
-        print("Entrada incorrecta volviendo al menu principal.")
+        print("\nEntrada incorrecta volviendo al menu principal.\n")
+        sleep(1)
         con.close()
 
 

@@ -3,6 +3,13 @@ from email.message import EmailMessage
 
 
 def enviar_correo(destinatario, mensaje):
+    """
+    Envia un correo siguendo la metodologia SMTP
+    
+    Parametros:
+    destinatario (string): Correo electronico del destinatario
+    mensaje (string): Cuerpo del mensaje que se va a enviar
+    """
     email_smtp = "smtp.gmail.com"
     usuario = "soporte.spotyun@gmail.com"
     contraseña = "Y@hYycq*]6br$J6;KUs6"
@@ -32,7 +39,7 @@ def enviar_correo(destinatario, mensaje):
 
     # Se envia el mensaje 
     server.send_message(message) 
-    print("Mensaje enviado rebisa tu correo.")
+    print("Mensaje enviado revie su correo.")
 
     # Se cierra la conexión al servidor 
     server.quit()

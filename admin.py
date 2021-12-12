@@ -303,6 +303,8 @@ def admin_logueado(con, cur, data):
     """
     print(f"\nBienvenido Administrador {data[1]} {data[2]}")
     sleep(1)
+    # TODO: Agregar funcion para actualizar datos
+    # TODO: Crear modulo y funcion para eliminar datos
 
     while True:
         print("\nSeleccione la accion que desea realizar:")

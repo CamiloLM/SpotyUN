@@ -31,7 +31,7 @@ def reproductor(cur, cancion):
     Reproduce una cancion usando la funcion Mixer de la libreria Pygame
 
     Parametros:
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones
+    cur (sqlite3.Cursor): Necesario para cambiar de cancion
     cancion (list): Datos de la canción
     """
     mixer.init()
@@ -39,10 +39,11 @@ def reproductor(cur, cancion):
 
     # Verifica la existencia de la canción
     if existencia(cancionUrl):
-        print(f"La cancion {cancion[1]} se esta reproduciendo.")
+        print("Cargando canción...")
         mixer.music.load(cancionUrl)
         mixer.music.set_volume(0.2)
         mixer.music.play()
+        print(f"La cancion {cancion[1]} se esta reproduciendo.")
 
         # Bucle que maneja los controles de la canción
         while True:
@@ -74,10 +75,11 @@ def reproductor(cur, cancion):
                     
                     # Verifica nuevamente que la canción exista
                     if existencia(cancionUrl):
-                        print(f"La cancion {cancion[1]} se esta reproduciendo.")
+                        print("Cargando canción...")
                         mixer.music.load(cancionUrl)
                         mixer.music.set_volume(0.2)
                         mixer.music.play()
+                        print(f"La cancion {cancion[1]} se esta reproduciendo.")
                     else:
                         print("No se encuentra la cancion.")
                         break
