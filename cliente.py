@@ -1,8 +1,12 @@
 from prettytable import PrettyTable
-from crud.read import buscar_cancion_especifica, consulta_canciones, buscar_cancion, consulta_usuario_listas, consulta_planes
+from crud.read import (
+    buscar_cancion_especifica, consulta_canciones, buscar_cancion_nombre,
+    consulta_usuario_listas, consulta_planes, buscar_lista
+)
 from crud.insert import agregar_cancion, agregar_subscripcion
 from crud.update import actualizar_cliente
 from player import reproductor
+from correo import enviar_correo
 
 
 def cliente_logueado(con, cur, data):
@@ -17,7 +21,8 @@ def cliente_logueado(con, cur, data):
         print("6. Actualizar mi informacion.")
         print("7. Consultar planes premium.")
         print("8. Subscribirme a un plan premium.")
-        print("\t0. Cerrar sesion.")
+        print("9. Enviar lista de canción al correo.")
+        print("0. Cerrar sesion.")
         case = input()
         
         if case == "1":
@@ -32,7 +37,7 @@ def cliente_logueado(con, cur, data):
         elif case == "2":
             print("Escribe el nombre de la cancion que quieres buscar:")
             busqueda = input()
-            listado = buscar_cancion(cur, busqueda)
+            listado = buscar_cancion_nombre(cur, busqueda)
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["No.", "Nombre", "Artista", "Album", "Genero"]
             if listado:
@@ -80,7 +85,7 @@ def cliente_logueado(con, cur, data):
             listado = consulta_usuario_listas(cur, data[0])
             if listado:
                 for fila in listado:
-                    mi_tabla.add_row(fila[0])
+                    mi_tabla.add_row([fila[0],])
                 print("Estos son los resultados:")
                 print(mi_tabla)
             else:
@@ -120,10 +125,26 @@ def cliente_logueado(con, cur, data):
             else:
                 print("El nombre del plan que ingreso no es correcto.")
         
+        elif case == "9":
+            listado = consulta_usuario_listas(cur, data[0])
+            print("Escriba el nombre de la lista que quiere enviar:")
+            nombre = input()
+
+            if nombre in listado[0]:
+                mi_tabla = PrettyTable()
+                mi_tabla.title = f"Canciones de la lista {nombre}"
+                mi_tabla.field_names = ["No.", "Nombre", "Artista", "Album", "Genero"]
+                for codigo in buscar_lista(cur, nombre, data[0]):
+                    cancion = buscar_cancion_especifica(cur, codigo[0])
+                    mi_tabla.add_row([cancion[0], cancion[1], cancion[5], cancion[4], cancion[3]])
+                enviar_correo(data[3], mi_tabla.get_string())
+            else:
+                print("El nombre que ingreso no forma parte de sus listas o esta mal escrito.")
+                print("Operación no realizada.")
+        
         elif case == "0":
             print("Sesion terminada.")
             print("Hasta Pronto.")
             break
         else:
             print("Entrada incorrecta. Intente otra vez.")
-

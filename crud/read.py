@@ -3,7 +3,7 @@ def consulta_canciones(cur):
     return cur.fetchall()
 
 
-def buscar_cancion(cur, nombre):
+def buscar_cancion_nombre(cur, nombre):
     datos = [nombre + "%"]
     cur.execute("SELECT * FROM cancion WHERE nombre LIKE ?", datos)
     return cur.fetchall()
@@ -61,7 +61,7 @@ def consulta_usuario_listas(cur, cedula):
 
 def buscar_lista(cur, nombre, cedula):
     datos = [nombre, cedula]
-    cur.execute("SELECT * FROM listaCanciones WHERE nombreLista LIKE ? AND cedulaCliente = ?", datos)
+    cur.execute("SELECT codigoCancion FROM listaCanciones WHERE nombreLista LIKE ? AND cedulaCliente = ?", datos)
     return cur.fetchall()
 
 

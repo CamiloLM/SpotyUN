@@ -17,20 +17,25 @@ def conexion():
 def conexion_administrador():
     con = conexion()
     cur = con.cursor()
-    print("Ingrese el documento del administrador")
+    print("\nIngrese el documento del administrador")
     entrada = input()
     while not entrada.isdecimal():
         print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
         print("Intentelo nuevamente:")
-    entrada = int(entrada)
+        entrada = input()
     print("Validando informacion...")
-    datos = buscar_admin(cur, entrada)
+
+    # Busca en la base de datos al administrador
+    datos = buscar_admin(cur, int(entrada))
     if datos is not None:
         admin_logueado(con, cur, datos)
+        sleep(1)
         con.close()
+        del datos
     else:
-        print("Administrador no registrado. Verifique el numero de identificación")
-        print("Volviendo al menu principal.")
+        print("\nAdministrador no registrado, verifique el numero de identificación.")
+        print("Volviendo al menu principal.\n")
+        sleep(1)
         con.close()
 
 
@@ -92,7 +97,7 @@ if __name__ == "__main__":
         print("Seleccione la opcion que desea realizar:")
         print("1. Ingresar como Administrador.")
         print("2. Ingresar como Cliente.")
-        print("3. Salir del programa.")
+        print("0. Salir del programa.")
         case = input()
 
         if case == "1":
@@ -101,10 +106,10 @@ if __name__ == "__main__":
         elif case == "2":
             conexion_cliente()
         
-        elif case == "3":
-            print("Hasta Luego.")
+        elif case == "0":
+            print("\nHasta Luego.")
             sleep(1)
             break
 
         else:
-            print("Entrada incorrecta. Intente otra vez.")
+            print("\nEntrada incorrecta. Por favor, intente otra vez.\n")
