@@ -1,8 +1,10 @@
 import sqlite3
+
+# from pygame.constants import CONTROLLER_BUTTON_DPAD_RIGHT
 from crud.read import buscar_cliente, buscar_admin
 from crud.insert import insertar_cliente
 from cliente import cliente_logueado
-from admin import admin_logueado
+from admin import admin_logueado, crear_base
 from time import sleep
 
 
@@ -99,6 +101,9 @@ def conexion_cliente():
 
 
 if __name__ == "__main__":
+    #TODO: Mejorar comentarios mas descriptivos
+    #TODO: Mejorar presentacion del menu y tablas
+    #TODO: Bloque logico si la base no esta creada
 
     print("╔" + "═"*32 + "╗")
     print("║ Bienvenido al Programa SpotyUN ║")
@@ -108,6 +113,8 @@ if __name__ == "__main__":
         print("Seleccione la opcion que desea realizar:")
         print("1. Ingresar como Administrador.")
         print("2. Ingresar como Cliente.")
+        # TODO: Hotfix para crear una base rapido
+        print("3. Crear base de datos.")
         print("0. Salir del programa.")
         case = input()
 
@@ -116,6 +123,12 @@ if __name__ == "__main__":
 
         elif case == "2":
             conexion_cliente()
+
+        elif case == "3":
+            con = conexion()
+            cur = con.cursor()
+            crear_base(con, cur)
+            con.close()
         
         elif case == "0":
             print("\nHasta Luego.")

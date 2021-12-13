@@ -1,7 +1,13 @@
 from prettytable import PrettyTable
 import crud.read
 import crud.insert
+from crud.create import crear_tablas
 from time import sleep
+
+def crear_base(con, cur):
+    crear_tablas(con, cur)
+    datos = [9876543210, "Administrador", "Basico", "correo@gmail.com"]
+    crud.insert.insertar_admin(con, cur, datos)
 
 
 def consultas_general(cur):
@@ -33,7 +39,7 @@ def consultas_general(cur):
         
         elif select == "2":
             mi_tabla = PrettyTable()
-            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono", "Targeta credito", "Fecha Pago", "Pago"]
+            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono", "Tarjeta credito", "Fecha Pago", "Pago"]
             listado = crud.read.consulta_clientes(cur)
             if listado:
                 for fila in listado:
@@ -132,7 +138,7 @@ def consultas_especificas(cur):
         
         elif select == "2":
             mi_tabla = PrettyTable()
-            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono", "Targeta credito", "Fecha Pago", "Pago"]
+            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono", "Tarjeta credito", "Fecha Pago", "Pago"]
             cedula = input("Cedula del cliente: ")
             lista = crud.read.buscar_cliente(cur, cedula)
             if lista:
@@ -245,7 +251,7 @@ def insertar_datos(con, cur):
             pais = input("Pais: ")
             ciudad = input("Ciudad: ")
             telefono = input("Numero de telefono: ")
-            targetaCredito = input("Numero targeta de credito: ")
+            targetaCredito = input("Numero tarjeta de credito: ")
             fechaPago = input("Fecha pago: ")
             print("Pago realizado? Si:1, No:0")
             pago = input()
@@ -301,10 +307,12 @@ def admin_logueado(con, cur, data):
     cur (sqlite3.Cursor): Necesario para pasarlo a otras funciones.
     data (list): Datos del administrador.
     """
-    print(f"\nBienvenido Administrador {data[1]} {data[2]}")
+    print(f"\nBienvenido {data[1]} {data[2]}")
     sleep(1)
     # TODO: Agregar funcion para actualizar datos
     # TODO: Crear modulo y funcion para eliminar datos
+    # TODO: Agregar consultas y orden por cualquier valor
+    # TODO: Crear funcion para vaciar las tablas de la base de datos
 
     while True:
         print("\nSeleccione la accion que desea realizar:")
@@ -313,7 +321,7 @@ def admin_logueado(con, cur, data):
         print("3. Ingresar nuevos datos a la base.")
         print("0. Salir")
         case = input()
-
+        
         if case == "1":
             consultas_general(cur)
 

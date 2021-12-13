@@ -143,7 +143,7 @@ def cliente_logueado(con, cur, data):
             pais = input("Ingrese el nombre del pais donde habita: ")
             ciudad = input("Ingrese el nombre de la ciudad donde habita: ")
             telefono = input("Ingrese su numero telefono: ")
-            targetaCredito = input("Ingrese el numero de targeta de credito: ")
+            targetaCredito = input("Ingrese el numero de tarjeta de credito: ")
 
             # Verficacion de datos en la entrada
             if nombre.isalpha() and apellido.isalpha() and bool(correo):

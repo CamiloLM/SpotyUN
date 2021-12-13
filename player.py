@@ -1,7 +1,7 @@
 # Este archivo maneja las operaciones para la reproduccion del audio
 from os import environ
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
-from pygame import mixer
+from pygame import mixer   # Importa el reproductor de musica del modulo Pygame
 from crud.read import buscar_cancion_especifica
 
 def existencia(filePath):
