@@ -17,68 +17,84 @@ def conexion():
 def conexion_administrador():
     con = conexion()
     cur = con.cursor()
-    print("Ingrese el documento del administrador")
+    print("\nIngrese el documento del administrador")
     entrada = input()
     while not entrada.isdecimal():
         print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
+        sleep(1)
         print("Intentelo nuevamente:")
-    entrada = int(entrada)
+        entrada = input()
     print("Validando informacion...")
-    datos = buscar_admin(cur, entrada)
+
+    # Busca en la base de datos al administrador
+    datos = buscar_admin(cur, int(entrada))
     if datos is not None:
         admin_logueado(con, cur, datos)
+        sleep(1)
         con.close()
+        del datos
     else:
-        print("Administrador no registrado. Verifique el numero de identificación")
-        print("Volviendo al menu principal.")
+        print("\nAdministrador no registrado, verifique el numero de identificación.")
+        print("Volviendo al menu principal.\n")
+        sleep(1)
         con.close()
 
 
 def conexion_cliente():
     con = conexion()
     cur = con.cursor()
-    print("Seleccione la opcion de ingreso:")
+    print("\nSeleccione la opcion de ingreso:")
     print("1. Ingresar con una cuenta ya registrada.")
     print("2. Crear una cuenta nueva.")
     opcion = input()
 
     if opcion == "1":
-        print("Ingrese el documento del cliente")
+        print("\nIngrese el documento del cliente")
         entrada = input()
         while not entrada.isdecimal():
             print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
+            sleep(1)
             print("Intentelo nuevamente:")
+            entrada = input()
         entrada = int(entrada)
         print("Validando informacion...")
+
+        # Busca en la base de datos al cliente
         datos = buscar_cliente(cur, entrada)
         if datos is not None:
             cliente_logueado(con, cur, datos)
             con.close()
         else:
-            print("Cliente no registrado. Verifique el numero de identificación")
-            print("Volviendo al menu principal.")
+            print("\nCliente no registrado. Verifique el numero de identificación")
+            print("Volviendo al menu principal.\n")
             con.close()
             
     elif opcion == "2":
-        cedula = input("Ingrese su numero de cedula: ")
+        cedula = input("\nIngrese su numero de cedula: ")
         nombre = input("Ingrese su nombre: ")
         apellido = input("Ingrese su apellido: ")
         correo = input("Ingrese su correo electronico: ")
         
+        # Verficacion de datos en la entrada
         if cedula.isdecimal() and nombre.isalpha() and apellido.isalpha() and bool(correo):
+            # Insercion del cliente en la base de datos
             datos = [int(cedula), nombre, apellido, correo, None, None, None, None, None, 0]
             insertar_cliente(con, cur, datos)
+
             print("Cliente registrado satisfactoriamente")
             del cedula, nombre, apellido, correo
+
             cliente_logueado(con, cur, datos)
             con.close()
         else:
-            print("Alguno de los datos se ingresaron incorrectamente.")
-            print("Volviendo al menu principal.")
+            print("\nAlguno de los datos se ingresaron incorrectamente.")
+            print("Volviendo al menu principal.\n")
+            sleep(2)
             con.close()
             
     else:
-        print("Entrada incorrecta volviendo al menu principal.")
+        print("\nEntrada incorrecta volviendo al menu principal.\n")
+        sleep(1)
         con.close()
 
 
@@ -92,7 +108,7 @@ if __name__ == "__main__":
         print("Seleccione la opcion que desea realizar:")
         print("1. Ingresar como Administrador.")
         print("2. Ingresar como Cliente.")
-        print("3. Salir del programa.")
+        print("0. Salir del programa.")
         case = input()
 
         if case == "1":
@@ -101,10 +117,10 @@ if __name__ == "__main__":
         elif case == "2":
             conexion_cliente()
         
-        elif case == "3":
-            print("Hasta Luego.")
+        elif case == "0":
+            print("\nHasta Luego.")
             sleep(1)
             break
 
         else:
-            print("Entrada incorrecta. Intente otra vez.")
+            print("\nEntrada incorrecta. Por favor, intente otra vez.\n")
