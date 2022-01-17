@@ -11,7 +11,7 @@ from time import sleep
 from datetime import date
 
 
-def registro_pago(con, cur, cedula,):
+def registro_pago(con, cur, cedula, ):
     """Actualiza la informacion del cliente con una nueva fecha de pago."""
     fecha = date.today()
     mes = fecha.month + 5
@@ -24,7 +24,7 @@ def registro_pago(con, cur, cedula,):
 
 def cliente_logueado(con, cur, data):
     """
-    Función principal maneja toda las acciones del cliente.
+    Función principal maneja todas las acciones del cliente.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
@@ -49,7 +49,7 @@ def cliente_logueado(con, cur, data):
         print("9. Enviar lista de canción al correo.")
         print("0. Cerrar sesion.")
         case = input()
-        
+
         if case == "1":
             # TODO: Modificar consulta canciones, añadir limite y aleatoriedad.
             # Busca todas las canciones en la base de datos
@@ -61,7 +61,7 @@ def cliente_logueado(con, cur, data):
             print("\nEstas son las canciones que puedes elegir:")
             print(mi_tabla)
             sleep(3)
-        
+
         elif case == "2":
             print("\nEscribe el nombre de la cancion que quieres buscar:")
             busqueda = input()
@@ -79,7 +79,7 @@ def cliente_logueado(con, cur, data):
             else:
                 print("\nEl termino que buscaste no ha encontrado resultados.")
                 sleep(1)
-        
+
         elif case == "3":
             print("\nEscriba el numero de la cancion que quiere reproducir:")
             codigo = input()
@@ -92,21 +92,21 @@ def cliente_logueado(con, cur, data):
                 print("\nEl valor que ingreso no es un numero.")
                 print("Accion no realizada.")
                 sleep(2)
-        
+
         elif case == "4":
             print("\nEscriba el numero de la cancion que quiere añadir:")
             codigo = input()
             print("Ingresa el nombre de la lista donde vas a agregar la cancion.")
             print("Si no hay una lista con ese nombre, se creara una nueva llamada asi.")
-            nombreLista = input()
-            # Verificacion que la entrada sea un numero
+            nombre_lista = input()
+            # Verificacion que la entrada sea un número
             if codigo.isdecimal():
                 codigo = int(codigo)
                 # Busca si la cancion existe en la base de datos
                 cancion = buscar_cancion_especifica(cur, codigo)
                 # TODO: Agregar bloque logico si la cancion no existe.
-                if nombreLista:
-                    datos = [nombreLista, data[0], cancion[0]]
+                if nombre_lista:
+                    datos = [nombre_lista, data[0], cancion[0]]
                     # Inserta la cancion en listaCanciones
                     agregar_cancion(con, cur, datos)
                     print("\nLa cancion ha sido añadida a la lista")
@@ -119,7 +119,7 @@ def cliente_logueado(con, cur, data):
                 print("\nEl valor de cancion que ingreso no es un numero.")
                 print("Accion no realizada.")
                 sleep(2)
-        
+
         elif case == "5":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Nombre de la Lista"]
@@ -128,14 +128,14 @@ def cliente_logueado(con, cur, data):
             listado = consulta_usuario_listas(cur, data[0])
             if listado:
                 for fila in listado:
-                    mi_tabla.add_row([fila[0],])
+                    mi_tabla.add_row([fila[0], ])
                 print("\nEstos son los resultados:")
                 print(mi_tabla)
                 sleep(2)
             else:
-                print("\nEl usuario no tiene listas de canciones.") 
+                print("\nEl usuario no tiene listas de canciones.")
                 sleep(1)
-        
+
         elif case == "6":
             nombre = input("\nIngrese su nombre: ")
             apellido = input("Ingrese su apellido: ")
@@ -143,19 +143,19 @@ def cliente_logueado(con, cur, data):
             pais = input("Ingrese el nombre del pais donde habita: ")
             ciudad = input("Ingrese el nombre de la ciudad donde habita: ")
             telefono = input("Ingrese su numero telefono: ")
-            targetaCredito = input("Ingrese el numero de tarjeta de credito: ")
+            targeta_credito = input("Ingrese el numero de tarjeta de credito: ")
 
             # Verficacion de datos en la entrada
             if nombre.isalpha() and apellido.isalpha() and bool(correo):
                 # Insercion del cliente en la base de datos
-                datos = [nombre, apellido, correo, pais, ciudad, telefono, targetaCredito, data[0]]
+                datos = [nombre, apellido, correo, pais, ciudad, telefono, targeta_credito, data[0]]
                 actualizar_cliente(con, cur, datos)
 
-                del nombre, apellido, correo, pais, ciudad, telefono, targetaCredito
+                del nombre, apellido, correo, pais, ciudad, telefono, targeta_credito
             else:
                 print("\nAlguno de los datos se ingresaron incorrectamente.")
                 sleep(2)
-        
+
         elif case == "7":
             # TODO: Modificar los planes, en cantidad es numero de canciones disponibles.
             # Busca todas los plnes en la base de datos
@@ -167,7 +167,7 @@ def cliente_logueado(con, cur, data):
             print("\nEstas son los planes a los que puedes subscribirte:")
             print(mi_tabla)
             sleep(3)
-        
+
         elif case == "8":
             print("\nIngrese el nombre del plan al que se quiere subscribir:")
             nombre = input()
@@ -182,21 +182,21 @@ def cliente_logueado(con, cur, data):
             else:
                 print("\nEl nombre del plan que ingreso no es correcto.")
                 sleep(2)
-        
+
         elif case == "9":
-            #Consulta las listas del usuario
+            # Consulta las listas del usuario
             listado = consulta_usuario_listas(cur, data[0])
 
             print("\nEscriba el nombre de la lista que quiere enviar:")
             nombre = input()
 
-            # Verifica que el nombre este en sus listas de canciones
+            # Verifica que el nombre esté en sus listas de canciones
             if nombre in listado[0]:
                 # TODO: Enviar el cuerpo del correo con una mejor tabla
                 mi_tabla = PrettyTable()
                 mi_tabla.title = f"Canciones de la lista {nombre}"
                 mi_tabla.field_names = ["No.", "Nombre", "Artista", "Album", "Genero"]
-                # Busca las canciones de la lista especifica
+                # Busca las canciones de la lista específica
                 for codigo in buscar_lista(cur, nombre, data[0]):
                     cancion = buscar_cancion_especifica(cur, codigo[0])
                     mi_tabla.add_row([cancion[0], cancion[1], cancion[5], cancion[4], cancion[3]])
@@ -207,7 +207,7 @@ def cliente_logueado(con, cur, data):
                 print("\nEl nombre que ingreso no forma parte de sus listas o esta mal escrito.")
                 print("Operación no realizada.")
                 sleep(2)
-        
+
         elif case == "0":
             print("\nSesion terminada.")
             print("Hasta Pronto.\n")

@@ -5,7 +5,7 @@ def insertar_cancion(con, cur, cancion):
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cliente (list): nombre, ubicacion, genero, album, interprete.
+    cliente (list): nombre, ubicacion, género, album, interprete.
     """
     cur.execute("INSERT INTO cancion VALUES (?, ?, ?, ?, ?, ?)", cancion)
     con.commit()

@@ -57,7 +57,7 @@ def consulta_planes(cur):
 
 def buscar_plan(cur, nombre):
     """
-    Consulta una plan por su nombre.
+    Consulta un plan por su nombre.
     
     Parametros:
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
@@ -76,7 +76,7 @@ def consulta_subscripciones(cur):
 
 def buscar_subscripcion(cur, cedula):
     """
-    Consulta una plan por su nombre.
+    Consulta un plan por su nombre.
     
     Parametros:
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.

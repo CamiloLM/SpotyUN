@@ -1,6 +1,6 @@
 # Proyecto SpotyUN
 
-_Este proyecto forma parte de la primera entra para el curso Programación Orientada a Objetos 2021-2 de la Universidad Nacional de Colombia.._
+_Este proyecto forma parte de la primera entra para el curso Programación Orientada a Objetos 2021-2 de la Universidad Nacional de Colombia._
 
 ### Pre-requisitos 📋
 

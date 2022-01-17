@@ -1,10 +1,12 @@
 # Este archivo maneja las operaciones para la reproduccion del audio
 from os import environ
-environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
-from pygame import mixer   # Importa el reproductor de musica del modulo Pygame
+from pygame import mixer  # Importa el reproductor de música del módulo Pygame
 from crud.read import buscar_cancion_especifica
 
-def existencia(filePath):
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
+
+
+def existencia(ruta_archivo):
     """
     Comprueba la existencia de un archivo en el sistema.
     
@@ -16,7 +18,7 @@ def existencia(filePath):
         False (bool): Si NO encuentra el archivo, imprime el error.
     """
     try:
-        with open(filePath, 'r') as f:
+        with open(ruta_archivo, 'r'):
             return True
     except FileNotFoundError as e:
         print(e)
@@ -31,16 +33,16 @@ def reproductor(cur, cancion):
     Reproduce una cancion usando la funcion Mixer de la libreria Pygame
 
     Parametros:
-    cur (sqlite3.Cursor): Necesario para cambiar de cancion
-    cancion (list): Datos de la canción
+    cur (sqlite3.Cursor): Necesario para cambiar de canción.
+    canción (list): Datos de la canción
     """
     mixer.init()
-    cancionUrl = f"canciones/{cancion[2]}"
+    cancion_url = f"canciones/{cancion[2]}"
 
     # Verifica la existencia de la canción
-    if existencia(cancionUrl):
+    if existencia(cancion_url):
         print("Cargando canción...")
-        mixer.music.load(cancionUrl)
+        mixer.music.load(cancion_url)
         mixer.music.set_volume(0.2)
         mixer.music.play()
         print(f"La cancion {cancion[1]} se esta reproduciendo.")
@@ -61,8 +63,8 @@ def reproductor(cur, cancion):
             elif opcion == "R" or opcion == "r":
                 print(f"La cancion {cancion[1]} se esta reproduciendo.")
                 mixer.music.unpause()
-            
-            elif opcion=="E" or opcion == "e":
+
+            elif opcion == "E" or opcion == "e":
                 mixer.music.stop()
                 print("Escriba el numero de la cancion que quiere reproducir:")
                 codigo = input()
@@ -71,12 +73,12 @@ def reproductor(cur, cancion):
                 if codigo.isdecimal():
                     codigo = int(codigo)
                     cancion = buscar_cancion_especifica(cur, codigo)  # Busca los datos en la BD
-                    cancionUrl = f"canciones/{cancion[2]}"
-                    
+                    cancion_url = f"canciones/{cancion[2]}"
+
                     # Verifica nuevamente que la canción exista
-                    if existencia(cancionUrl):
+                    if existencia(cancion_url):
                         print("Cargando canción...")
-                        mixer.music.load(cancionUrl)
+                        mixer.music.load(cancion_url)
                         mixer.music.set_volume(0.2)
                         mixer.music.play()
                         print(f"La cancion {cancion[1]} se esta reproduciendo.")
@@ -86,7 +88,7 @@ def reproductor(cur, cancion):
                 else:
                     print("El valor que ingreso no es un numero.")
                     break
-                             
+
             elif opcion == "S" or opcion == "s":
                 mixer.music.stop()
                 break

@@ -4,6 +4,7 @@ import crud.insert
 from crud.create import crear_tablas
 from time import sleep
 
+
 def crear_base(con, cur):
     crear_tablas(con, cur)
     datos = [9876543210, "Administrador", "Basico", "correo@gmail.com"]
@@ -12,7 +13,7 @@ def crear_base(con, cur):
 
 def consultas_general(cur):
     """Consulta general de tablas, se usa el cursor para hacer la selección."""
-    
+
     while True:
         print("\nSeleccione las consultas generales a relizar:")
         print("1. Canciones.")
@@ -36,20 +37,22 @@ def consultas_general(cur):
                 sleep(3)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "2":
             mi_tabla = PrettyTable()
-            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono", "Tarjeta credito", "Fecha Pago", "Pago"]
+            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono",
+                                    "Tarjeta credito", "Fecha Pago", "Pago"]
             listado = crud.read.consulta_clientes(cur)
             if listado:
                 for fila in listado:
-                    mi_tabla.add_row([fila[0], fila[1], fila[2], fila[3], fila[4], fila[5], fila[6], fila[7], fila[8], fila[9]])
+                    mi_tabla.add_row(
+                        [fila[0], fila[1], fila[2], fila[3], fila[4], fila[5], fila[6], fila[7], fila[8], fila[9]])
                 print("\nEstos son los resultados:")
                 print(mi_tabla)
                 sleep(3)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "3":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Nombre", "Valor", "Cantidad", "Descripcion"]
@@ -62,7 +65,7 @@ def consultas_general(cur):
                 sleep(3)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "4":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Cedula cliente", "Nombre plan"]
@@ -75,7 +78,7 @@ def consultas_general(cur):
                 sleep(3)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "5":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Nombre lista", "Cedula", "Codigo"]
@@ -88,7 +91,7 @@ def consultas_general(cur):
                 sleep(3)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "6":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo"]
@@ -101,7 +104,7 @@ def consultas_general(cur):
                 sleep(3)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "0":
             break
 
@@ -110,7 +113,7 @@ def consultas_general(cur):
 
 
 def consultas_especificas(cur):
-    """Consulta especifica de tablas, se usa el cursor para hacer la selección."""
+    """Consulta específica de tablas, se usa el cursor para hacer la selección."""
 
     while True:
         print("\nSeleccione las consultas especificas a realizar:")
@@ -135,20 +138,23 @@ def consultas_especificas(cur):
                 sleep(1)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "2":
             mi_tabla = PrettyTable()
-            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono", "Tarjeta credito", "Fecha Pago", "Pago"]
+            mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo", "Pais", "Ciudad", "Telefono",
+                                    "Tarjeta credito", "Fecha Pago", "Pago"]
             cedula = input("Cedula del cliente: ")
             lista = crud.read.buscar_cliente(cur, cedula)
             if lista:
-                mi_tabla.add_row([lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8], lista[9]])
+                mi_tabla.add_row(
+                    [lista[0], lista[1], lista[2], lista[3], lista[4], lista[5], lista[6], lista[7], lista[8],
+                     lista[9]])
                 print("\nEstos son los resultados:")
                 print(mi_tabla)
                 sleep(1)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "3":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Nombre", "Valor", "Cantidad", "Descripcion"]
@@ -161,7 +167,7 @@ def consultas_especificas(cur):
                 sleep(1)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "4":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Cedula cliente", "Nombre plan"]
@@ -174,7 +180,7 @@ def consultas_especificas(cur):
                 sleep(1)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "5":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Nombre lista", "Cedula", "Codigo"]
@@ -188,7 +194,7 @@ def consultas_especificas(cur):
                 sleep(1)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "6":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Cedula", "Nombre", "Apellido", "Correo"]
@@ -201,7 +207,7 @@ def consultas_especificas(cur):
                 sleep(1)
             else:
                 print("\nLa tabla no tiene datos")
-        
+
         elif select == "0":
             break
 
@@ -211,11 +217,11 @@ def consultas_especificas(cur):
 
 def insertar_datos(con, cur):
     """
-    Función para insertar datos en las tablas de la BD.
+        Función para insertar datos en las tablas de la BD.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+        Parametros:
+        con (sqlite3.Connection): Conexion a la base de datos.
+        cur (sqlite3.Cursor): Cursor para realizar las operaciones.
     """
     # TODO: Crear bloque logico para verificar los datos en todas las inserciones.
     # TODO: Testear las inserciones en la BD.
@@ -251,15 +257,16 @@ def insertar_datos(con, cur):
             pais = input("Pais: ")
             ciudad = input("Ciudad: ")
             telefono = input("Numero de telefono: ")
-            targetaCredito = input("Numero tarjeta de credito: ")
-            fechaPago = input("Fecha pago: ")
+            targeta_credito = input("Numero tarjeta de credito: ")
+            fecha_pago = input("Fecha pago: ")
             print("Pago realizado? Si:1, No:0")
             pago = input()
 
-            datos = [int(cedula), nombre, apellido, correo, pais, ciudad, int(telefono), int(targetaCredito), fechaPago, int(pago)]
+            datos = [int(cedula), nombre, apellido, correo, pais, ciudad, int(telefono), int(targeta_credito),
+                     fecha_pago, int(pago)]
             crud.insert.insertar_cliente(con, cur, datos)
             print("\nInserción realizada con exito.")
-        
+
         elif select == "3":
             print("\nIngrese los datos del plan")
             nombre = input("Nombre: ")
@@ -270,16 +277,16 @@ def insertar_datos(con, cur):
             datos = [nombre, valor, int(cantidad), descripcion]
             crud.insert.insertar_plan(con, cur, datos)
             print("\nInserción realizada con exito.")
-        
+
         elif select == "4":
             print("\nIngrese los datos de la subscripción")
-            cedulaCliente = input("Cedula cliente: ")
-            nombrePlan = input("Nombre plan: ")
-        
-            datos = [cedulaCliente, nombrePlan]
+            cedula_cliente = input("Cedula cliente: ")
+            nombre_plan = input("Nombre plan: ")
+
+            datos = [cedula_cliente, nombre_plan]
             crud.insert.agregar_subscripcion(con, cur, datos)
             print("\nInserción realizada con exito.")
-        
+
         elif select == "5":
             print("\nIngrese los datos del administrador")
             cedula = input("Numero de cedula: ")
@@ -290,7 +297,7 @@ def insertar_datos(con, cur):
             datos = [int(cedula), nombre, apellido, correo]
             crud.insert.insertar_admin(con, cur, datos)
             print("\nInserción realizada con exito.")
-        
+
         elif select == "0":
             break
 
@@ -300,12 +307,12 @@ def insertar_datos(con, cur):
 
 def admin_logueado(con, cur, data):
     """
-    Función principal que maneja las opciones del administrador.
+        Función principal que maneja las opciones del administrador.
 
-    Parametros:
-    con (sqlite3.Connection): Necesario para pasarlo a otras funciones.
-    cur (sqlite3.Cursor): Necesario para pasarlo a otras funciones.
-    data (list): Datos del administrador.
+        Parametros:
+        con (sqlite3.Connection): Necesario para pasarlo a otras funciones.
+        cur (sqlite3.Cursor): Necesario para pasarlo a otras funciones.
+        data (list): Datos del administrador.
     """
     print(f"\nBienvenido {data[1]} {data[2]}")
     sleep(1)
@@ -321,7 +328,7 @@ def admin_logueado(con, cur, data):
         print("3. Ingresar nuevos datos a la base.")
         print("0. Salir")
         case = input()
-        
+
         if case == "1":
             consultas_general(cur)
 

@@ -26,7 +26,7 @@ def enviar_correo(destinatario, mensaje):
     message.set_content(mensaje) 
 
     # Se establece el servidor
-    server = SMTP(email_smtp, '587') 
+    server = SMTP(email_smtp, 587)
 
     # Identifica este usuario al servidor SMTP
     server.ehlo() 

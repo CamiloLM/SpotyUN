@@ -1,26 +1,33 @@
-import sqlite3
-
-# from pygame.constants import CONTROLLER_BUTTON_DPAD_RIGHT
-from crud.read import buscar_cliente, buscar_admin
-from crud.insert import insertar_cliente
-from cliente import cliente_logueado
-from admin import admin_logueado, crear_base
-from time import sleep
+import sqlite3  # Modulo para realizar operaciones a la base de datos
+from crud.read import buscar_cliente, buscar_admin  # Funciones para comprobar los datos ingresados.
+from crud.insert import insertar_cliente  # Función para agregar un nuevo cliente.
+from cliente import cliente_logueado  # Función que controla las funcionalidades del cliente.
+from admin import admin_logueado, crear_base  # Funciones para controlar al administrador y la creación de la BD.
+from time import sleep  # Funcion estetica para controlar el comportamiento de la consola.
 
 
-def conexion():
+def conexion_base_datos():
+    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
     try:
-        con = sqlite3.connect('SpotyUN.db')
-        return con
+        return sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
     except sqlite3.Error:
-        print(sqlite3.Error)
+        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
 
 
-def conexion_administrador():
-    con = conexion()
-    cur = con.cursor()
+def conexion_administrador(con, cur):
+    """
+        Determina si los datos ingresados coinciden con algun registro en la base de datos.
+        Si los datos son correctos se crea una conexión con los datos del administrador.
+
+        Parametros:
+        con (sqlite3.Connection): Conexion a la base de datos.
+        cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    """
+
     print("\nIngrese el documento del administrador")
     entrada = input()
+
+    # Verifica que los datos que se ingresan son correctos y no causaran un error.
     while not entrada.isdecimal():
         print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
         sleep(1)
@@ -28,23 +35,33 @@ def conexion_administrador():
         entrada = input()
     print("Validando informacion...")
 
-    # Busca en la base de datos al administrador
+    # Confirma que los datos ingresados coinciden con un registro en la tabla de administrador.
     datos = buscar_admin(cur, int(entrada))
     if datos is not None:
-        admin_logueado(con, cur, datos)
+        admin_logueado(con, cur, datos)  # Si encuentra una coincidencia llama a la función controladora.
+        # Cuando la conexión con el administrador termina se borran los datos locales y se cierra la base de datos.
         sleep(1)
         con.close()
         del datos
     else:
         print("\nAdministrador no registrado, verifique el numero de identificación.")
         print("Volviendo al menu principal.\n")
+        # Cierra la conexion a la base de datos.
         sleep(1)
         con.close()
 
 
-def conexion_cliente():
-    con = conexion()
-    cur = con.cursor()
+def conexion_cliente(con, cur):
+    """
+        Determina si los datos ingresados coinciden con algun registro en la base de datos.
+        Si los datos son correctos se crea una conexión con los datos del cliente, tambien se pueden ingresar
+        los datos de un nuevo cliente.
+
+        Parametros:
+        con (sqlite3.Connection): Conexion a la base de datos.
+        cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    """
+
     print("\nSeleccione la opcion de ingreso:")
     print("1. Ingresar con una cuenta ya registrada.")
     print("2. Crear una cuenta nueva.")
@@ -53,6 +70,8 @@ def conexion_cliente():
     if opcion == "1":
         print("\nIngrese el documento del cliente")
         entrada = input()
+
+        # Verifica que los datos que se ingresan son correctos y no causaran un error.
         while not entrada.isdecimal():
             print("Su entrada es incorrecta. Solo ingrese numeros sin puntos ni comas.")
             sleep(1)
@@ -61,14 +80,19 @@ def conexion_cliente():
         entrada = int(entrada)
         print("Validando informacion...")
 
-        # Busca en la base de datos al cliente
+        # Confirma que los datos ingresados coinciden con un registro en la tabla de clientes.
         datos = buscar_cliente(cur, entrada)
         if datos is not None:
-            cliente_logueado(con, cur, datos)
+            cliente_logueado(con, cur, datos)  # Si encuentra una coincidencia llama a la función controladora.
+            # Cuando la conexión con el cliente termina se borran los datos locales y se cierra la base de datos.
+            sleep(1)
             con.close()
+            del datos
         else:
             print("\nCliente no registrado. Verifique el numero de identificación")
             print("Volviendo al menu principal.\n")
+            # Cierra la conexion a la base de datos.
+            sleep(1)
             con.close()
             
     elif opcion == "2":
@@ -77,23 +101,21 @@ def conexion_cliente():
         apellido = input("Ingrese su apellido: ")
         correo = input("Ingrese su correo electronico: ")
         
-        # Verficacion de datos en la entrada
+        # Verficacion de los datos que son ingresados
         if cedula.isdecimal() and nombre.isalpha() and apellido.isalpha() and bool(correo):
             # Insercion del cliente en la base de datos
             datos = [int(cedula), nombre, apellido, correo, None, None, None, None, None, 0]
-            insertar_cliente(con, cur, datos)
-
+            insertar_cliente(con, cur, datos) # Si los datos son correctos se crea el nuevo cliente.
             print("Cliente registrado satisfactoriamente")
+            cliente_logueado(con, cur, datos)  # Llama a la función controladora con los datos registrados.
+            # Cuando la conexión con el cliente termina se borran los datos locales y se cierra la base de datos.
             del cedula, nombre, apellido, correo
-
-            cliente_logueado(con, cur, datos)
             con.close()
         else:
             print("\nAlguno de los datos se ingresaron incorrectamente.")
             print("Volviendo al menu principal.\n")
             sleep(2)
             con.close()
-            
     else:
         print("\nEntrada incorrecta volviendo al menu principal.\n")
         sleep(1)
@@ -101,35 +123,38 @@ def conexion_cliente():
 
 
 if __name__ == "__main__":
-    #TODO: Mejorar comentarios mas descriptivos
-    #TODO: Mejorar presentacion del menu y tablas
-    #TODO: Bloque logico si la base no esta creada
+    # TODO: Mejorar comentarios mas descriptivos
+    # TODO: Mejorar presentacion del menu y tablas
 
     print("╔" + "═"*32 + "╗")
     print("║ Bienvenido al Programa SpotyUN ║")
     print("╚" + "═"*32 + "╝\n")
 
+    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
+    cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
+
     while True:
         print("Seleccione la opcion que desea realizar:")
         print("1. Ingresar como Administrador.")
         print("2. Ingresar como Cliente.")
-        # TODO: Hotfix para crear una base rapido
         print("3. Crear base de datos.")
         print("0. Salir del programa.")
         case = input()
 
+        # Bloque logico donde se escogen las opciones principales del programa.
         if case == "1":
-            conexion_administrador()
+            conexion_administrador(conexion, cursor)  # Llamada a la función que maneja el ingreso como administrador.
 
         elif case == "2":
-            conexion_cliente()
+            conexion_cliente(conexion, cursor)  # Llamada a la función que maneja el ingreso como cliente.
 
         elif case == "3":
-            con = conexion()
-            cur = con.cursor()
-            crear_base(con, cur)
-            con.close()
-        
+            # cursor.execute("GET_TABLES_SQL")
+            # tables = cursor.fetchall()
+            # for table in tables:
+            #     cursor.execute("DROP_TABLE_SQL".replace("TABLE_PARAMETER", table))
+            crear_base(conexion, cursor)
+
         elif case == "0":
             print("\nHasta Luego.")
             sleep(1)
