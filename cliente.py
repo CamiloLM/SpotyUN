@@ -91,6 +91,7 @@ def canciones_cliente(con, cur, cedula, limite):
         
         elif case == "4":
             print("\nEscriba el numero de la cancion que quiere añadir:")
+            # TODO: Que la entrada sea un entero.
             codigo = int(input())
             print("Ingresa el nombre de la lista donde vas a agregar la cancion.")
             print("Si no hay una lista con ese nombre, se creara una nueva llamada asi.")
@@ -278,6 +279,7 @@ def informacion_planes(con, cur, datos_cliente):
             if nombre.isalpha():
                 datos = [datos_cliente[0], nombre]
                 # TODO: El cliente solo deberia tener una subscripcion posible
+                # TODO: No agregar suscripción nueva.
                 agregar_subscripcion(con, cur, datos)
                 registro_pago(con, cur, datos)
                 print("\nSubscripcion añadida satisfactoriamente.")

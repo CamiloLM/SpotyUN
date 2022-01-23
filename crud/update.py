@@ -88,9 +88,9 @@ def actualizar_subscripcion(con, cur, plan, cedula):
     plan (str): Nombre del plan.
     cedula (int): Cedula del cliente.
     """
-    datos = [cedula, plan]
+    datos = [plan, cedula]
     cur.execute('''
         UPDATE subscripciones
-        SET nombrePlan = ?,
+        SET nombrePlan = ?
         WHERE cedulaCliente = ?''', datos)
     con.commit()
