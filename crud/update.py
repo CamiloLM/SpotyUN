@@ -40,7 +40,7 @@ def actualizar_cliente(con, cur, valores):
     con.commit()
 
 
-def actualizar_pago(con, cur, fecha, cedula):
+def actualizar_pago(con, cur, fecha, pago, cedula):
     """
     Ingresa un pago en la tabla cliente, estos datos deben estar en orden.
 
@@ -48,13 +48,14 @@ def actualizar_pago(con, cur, fecha, cedula):
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
     fecha (str): Fecha de vencimiento.
+    pago (int): Si el cliente pago 1, si no pago 0.
     cedula (int): Cedula del cliente.
     """
-    datos = [fecha, cedula]
+    datos = [fecha, pago, cedula]
     cur.execute('''
         UPDATE cliente
         SET fechaPago = ?,
-        pago = 1
+        pago = ?
         WHERE cedula = ?''', datos)
     con.commit()
 
@@ -74,4 +75,22 @@ def actualizar_plan(con, cur, valores):
         cantidad = ?,
         decripcion = ?
         WHERE nombre = ?''', valores)
+    con.commit()
+
+
+def actualizar_subscripcion(con, cur, plan, cedula):
+    """
+    Actualiza los datos en la tabla subscripciones.
+
+    Parametros:
+    con (sqlite3.Connection): Conexion a la base de datos.
+    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    plan (str): Nombre del plan.
+    cedula (int): Cedula del cliente.
+    """
+    datos = [cedula, plan]
+    cur.execute('''
+        UPDATE subscripciones
+        SET nombrePlan = ?,
+        WHERE cedulaCliente = ?''', datos)
     con.commit()

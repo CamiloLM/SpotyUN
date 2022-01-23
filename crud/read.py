@@ -1,6 +1,13 @@
-def consulta_canciones(cur):
-    """Consulta todos los datos de la tabla cancion"""
-    cur.execute("SELECT * FROM cancion")
+def consulta_canciones(cur, limite):
+    """
+    Consulta todos los datos de la tabla cancion
+    
+    Parametros:
+    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    limite (int): Limite de canciones por plan
+    """
+    datos = [limite]
+    cur.execute("SELECT * FROM cancion LIMIT ?", datos)
     return cur.fetchall()
 
 
@@ -12,6 +19,7 @@ def buscar_cancion_nombre(cur, nombre):
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
     nombre (str): Nombre de la cancion.
     """
+    # TODO: Añadir limite de canciones a busqueda por nombre
     datos = [nombre + "%"]
     cur.execute("SELECT * FROM cancion WHERE nombre LIKE ?", datos)
     return cur.fetchall()
@@ -93,30 +101,43 @@ def consulta_general_listas(cur):
     return cur.fetchall()
 
 
-def consulta_usuario_listas(cur, cedula):
+def consulta_especifica_listas(cur, cedula):
     """
     Consulta los nombres de las listas por la cedula del cliente.
     
     Parametros:
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cedulaCliente (int): Cedula del cliente
+    cedula (int): Cedula del cliente
+    """
+    datos = [cedula]
+    cur.execute("SELECT * nombreLista FROM listaCanciones WHERE cedulaCliente = ?", datos)
+    return cur.fetchall()
+
+
+def consulta_nombre_listas(cur, cedula):
+    """
+    Consulta los nombres de las listas por la cedula del cliente.
+    
+    Parametros:
+    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    cedula (int): Cedula del cliente
     """
     datos = [cedula]
     cur.execute("SELECT DISTINCT nombreLista FROM listaCanciones WHERE cedulaCliente = ?", datos)
     return cur.fetchall()
 
 
-def buscar_lista(cur, nombre, cedula):
+def consulta_codigo_listas(cur, cedula, nombre):
     """
-    Consulta los codigos de las canciones en la lista.
+    Consulta los nombres de las listas por la cedula del cliente.
     
     Parametros:
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    cedula (int): Cedula del cliente
     nombre (str): Nombre de la lista
-    cedulaCliente (int): Cedula del cliente
     """
-    datos = [nombre, cedula]
-    cur.execute("SELECT codigoCancion FROM listaCanciones WHERE nombreLista LIKE ? AND cedulaCliente = ?", datos)
+    datos = [cedula, nombre]
+    cur.execute("SELECT codigoCancion FROM listaCanciones WHERE cedulaCliente = ? AND nombreLista = ?", datos)
     return cur.fetchall()
 
 

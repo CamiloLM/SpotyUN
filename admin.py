@@ -6,9 +6,27 @@ from time import sleep
 
 
 def crear_base(con, cur):
-    crear_tablas(con, cur)
-    datos = [9876543210, "Administrador", "Basico", "correo@gmail.com"]
-    crud.insert.insertar_admin(con, cur, datos)
+    """Crea el esquema de la base de datos sin ningun dato en sus tablas."""
+    cur.execute("SELECT name FROM sqlite_schema WHERE type='table'")  # Busca el nombre de todas las tablas.
+    tablas = cur.fetchall()  # El nombre queda guardado en la vatiable tablas.
+    
+    # Se ejecuta si hay tablas en la base de datos.
+    if tablas:
+        for tabla, in tablas:  # Recorre la lista de tablas para borrarla una a una.
+            if tabla != "sqlite_sequence":  # No se puede borrar la tabla sqlite_sequence.
+                sql = f"DROP TABLE {tabla}"
+                cur.execute(sql)  # Ejecuta el comando para borrar los datos de la tabla.
+    
+    crear_tablas(con, cur)  # Crea las tablas del la base de datos si no existe.
+    datos_admin = [9876543210, "Administrador", "Basico", "correo@gmail.com"]
+    datos_plan = ["Gratis", 0.0, 5, "Plan gratuito disponible para todos los clientes."]
+
+    # Se ingresan los datos basicos que debe poseer la base.
+    crud.insert.insertar_admin(con, cur, datos_admin)
+    crud.insert.insertar_plan(con, cur, datos_plan)
+
+    del datos_admin, datos_plan
+    print("La base de datos basica se ha creado correctamente.\n")
 
 
 def consultas_general(cur):
@@ -28,7 +46,8 @@ def consultas_general(cur):
         if select == "1":
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Codigo", "Nombre", "Ubicacion", "Genero", "Album", "Interprete"]
-            listado = crud.read.consulta_canciones(cur)
+            # TODO: Añadir limite a la consulta
+            # listado = crud.read.consulta_canciones(cur)
             if listado:
                 for fila in listado:
                     mi_tabla.add_row([fila[0], fila[1], fila[2], fila[3], fila[4], fila[5]])

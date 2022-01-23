@@ -17,7 +17,7 @@ def crear_tablas(con, cur):
     cur.execute(
         '''CREATE TABLE IF NOT EXISTS cliente (cedula INTEGER PRIMARY KEY, nombre TEXT NOT NULL, apellido TEXT NOT 
         NULL, correo TEXT NOT NULL, pais TEXT, ciudad TEXT, telefono INTEGER, targetaCredito INTEGER, fechaPago TEXT, 
-        ago INTEGER) '''
+        pago INTEGER) '''
     )
 
     # Comando para crear la tabla planes con sus respectivos campos

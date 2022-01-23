@@ -1,8 +1,9 @@
-from smtplib import SMTP  # Librería para enviar correos electrónicos desde python
+# import os
+import smtplib  # Librería para enviar correos electrónicos desde python
 from email.message import EmailMessage
 
 
-def enviar_correo(destinatario, mensaje):
+def enviar_correo(destinatario, contenido):
     """
     Envia un correo siguendo la metodologia SMTP
     
@@ -10,36 +11,33 @@ def enviar_correo(destinatario, mensaje):
     destinatario (string): Correo electronico del destinatario
     mensaje (string): Cuerpo del mensaje que se va a enviar
     """
-    email_smtp = "smtp.gmail.com"
-    usuario = "soporte.spotyun@gmail.com"
-    contraseña = "Y@hYycq*]6br$J6;KUs6"
+    EMAIL_ADDRESS = "soporte.spotyun@gmail.com"
+    EMAIL_PASSWORD = "Y@hYycq*]6br$J6;KUs6"
 
-    # Se crea el objeto Emailmessage con el cual se hace la estructura para mandar el correo
-    message = EmailMessage() 
+    mensaje = EmailMessage()
+    mensaje['Subject'] = "Lista de SpotyUN"
+    mensaje['From'] = EMAIL_ADDRESS
+    mensaje['To'] = destinatario
+    mensaje.add_alternative(
+        """\
+        <html>
+        <head>
+            <style>
+                table, th, td {
+                    border: 1px solid black;
+                    border-collapse: collapse;
+                }
+            </style>
+        </head>
+            <body>
+                <p>Buen día apreciado cliente, aquí esta la lista con sus canciones.</p>
+        """ + contenido + """\
+                <p>Equipo de SpotifyUN.</p>
+            </body>
+        </html>
+        """, subtype = "html")
 
-    # Configuración de encabezado 
-    message['Subject'] = "Lista de SpotyUN"
-    message['From'] = usuario
-    message['To'] = destinatario
-
-    # Se establece el mensaje 
-    message.set_content(mensaje) 
-
-    # Se establece el servidor
-    server = SMTP(email_smtp, 587)
-
-    # Identifica este usuario al servidor SMTP
-    server.ehlo() 
-
-    # Secure the SMTP connection 
-    server.starttls() 
-
-    # Se ingresa a la cuenta
-    server.login(usuario, contraseña) 
-
-    # Se envia el mensaje 
-    server.send_message(message) 
-    print("Mensaje enviado revie su correo.")
-
-    # Se cierra la conexión al servidor 
-    server.quit()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        smtp.send_message(mensaje)
+        print("Mensaje enviado con exito, revise su correo.")

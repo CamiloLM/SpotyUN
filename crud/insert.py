@@ -111,5 +111,5 @@ def insertar_admin(con, cur, datos):
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
     cliente (list): cedula, nombre, apellido, correo.
     """
-    cur.execute("INSERT INTO administrador VALUES (?, ?, ?, ?)", datos)
+    cur.execute("INSERT OR IGNORE INTO administrador VALUES (?, ?, ?, ?)", datos)
     con.commit()
