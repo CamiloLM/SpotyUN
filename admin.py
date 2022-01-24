@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 import crud.read
 import crud.insert
+import crud.delete
 from crud.create import crear_tablas
 from time import sleep
 
@@ -47,7 +48,7 @@ def consultas_general(cur):
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Codigo", "Nombre", "Ubicacion", "Genero", "Album", "Interprete"]
             # TODO: Añadir limite a la consulta
-            # listado = crud.read.consulta_canciones(cur)
+            listado = crud.read.consulta_canciones(cur, 99)
             if listado:
                 for fila in listado:
                     mi_tabla.add_row([fila[0], fila[1], fila[2], fila[3], fila[4], fila[5]])
@@ -204,7 +205,7 @@ def consultas_especificas(cur):
             mi_tabla = PrettyTable()
             mi_tabla.field_names = ["Nombre lista", "Cedula", "Codigo"]
             cedula = input("Cedula del cliente: ")
-            listado = crud.read.consulta_usuario_listas(cur, cedula)
+            listado = crud.read.consulta_especifica_listas(cur, cedula)
             if listado:
                 for fila in listado:
                     mi_tabla.add_row([fila[0], fila[1], fila[2]])
@@ -324,6 +325,164 @@ def insertar_datos(con, cur):
             print("\nNumero equivocado.")
 
 
+def eliminar_general(con, cur):
+    """
+        Función para eliminar datos completos en las tablas de la base de datos.
+
+        Parametros:
+        con (sqlite3.Connection): Conexion a la base de datos.
+        cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    """
+
+    while True:
+        print("\nSeleccione la acción que desea realizar::")
+        print("1. Eliminar datos de cancion.")
+        print("2. Eliminar datos de cliente.")
+        print("3. Eliminar datos de planes.")
+        print("4. Eliminar datos de subscripciones.")
+        print("5. Eliminar datos de listaCanciones.")
+        print("6. Eliminar datos de administrador.")
+        print("0. Salir")
+        select = input()
+
+        if select == "1":
+            print("\nEsta seguro de que desea borrar todos los registros de la tabla cancion? S/n")
+            bandera = input()
+            if bandera == "S":
+                crud.delete.borrar_canciones(con, cur)
+                print("\nLos datos de la tabla han sido borrados.")
+            else:
+                print("\nNo se ha realizado ninguna acción.")
+
+        elif select == "2":
+            print("\nEsta seguro de que desea borrar todos los registros de la tabla cliente? S/n")
+            bandera = input()
+            if bandera == "S":
+                crud.delete.borrar_clientes(con, cur)
+                print("\nLos datos de la tabla han sido borrados.")
+            else:
+                print("\nNo se ha realizado ninguna acción.")
+
+        elif select == "3":
+            print("\nEsta seguro de que desea borrar todos los registros de la tabla planes? S/n")
+            bandera = input()
+            if bandera == "S":
+                crud.delete.borrar_planes(con, cur)
+                print("\nLos datos de la tabla han sido borrados.")
+            else:
+                print("\nNo se ha realizado ninguna acción.")
+
+        elif select == "4":
+            print("\nEsta seguro de que desea borrar todos los registros de la tabla subscripciones? S/n")
+            bandera = input()
+            if bandera == "S":
+                crud.delete.borrar_subscripciones(con, cur)
+                print("\nLos datos de la tabla han sido borrados.")
+            else:
+                print("\nNo se ha realizado ninguna acción.")
+
+        elif select == "5":
+            print("\nEsta seguro de que desea borrar todos los registros de la tabla listaCanciones? S/n")
+            bandera = input()
+            if bandera == "S":
+                crud.delete.borrar_listasCanciones(con, cur)
+                print("\nLos datos de la tabla han sido borrados.")
+            else:
+                print("\nNo se ha realizado ninguna acción.")
+
+        elif select == "6":
+            # TODO: Como salir del bucle principal si no hay administrador
+            # print("\nEsta seguro de que desea borrar todos los registros de la tabla administradores? S/n")
+            # bandera = input()
+            # if bandera == "S":
+            #     crud.delete.borrar_administradores(con, cur)
+            #     print("\nLos datos de la tabla han sido borrados.")
+            # else:
+            print("\nNo se ha realizado ninguna acción.")
+
+        elif select == "0":
+            break
+
+        else:
+            print("\nNumero equivocado.")
+
+
+def eliminar_especifico(con, cur, cedula_admin):
+    """
+        Función para eliminar datos especificos en las tablas de la base de datos.
+
+        Parametros:
+        con (sqlite3.Connection): Conexion a la base de datos.
+        cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    """
+    # TODO: Añadir logica al input en todas las eliminaciones
+    while True:
+        print("\nSeleccione la acción que desea realizar::")
+        print("1. Eliminar registro de cancion.")
+        print("2. Eliminar registro de cliente.")
+        print("3. Eliminar registro de planes.")
+        print("4. Eliminar registro de subscripciones.")
+        print("5. Eliminar registro de listaCanciones.")
+        print("6. Eliminar registro de administrador.")
+        print("0. Salir")
+        select = input()
+
+        if select == "1":
+            print("\nIngrese el codigo de la cancion a eliminar.")
+            entrada = input()
+            crud.delete.borrar_cancion(con, cur, entrada)
+            print("\nEliminación realizada con exito.")
+
+        elif select == "2":
+            print("\nIngrese la cedula del cliente a eliminar.")
+            entrada = input()
+            crud.delete.borrar_cliente(con, cur, entrada)
+            print("\nEliminación realizada con exito.")
+
+        elif select == "3":
+            print("\nIngrese el nombre exacto del plan a eliminar.")
+            entrada = input()
+            crud.delete.borrar_plan(con, cur, entrada)
+            print("\nEliminación realizada con exito.")
+
+        elif select == "4":
+            print("\nIngrese la cedula del cliente de la subscripcioón correspondiente.")
+            cedula = input()
+
+            print("\nIngrese el nombre del plan de la subscripcioón correspondiente.")
+            nombre = input()
+            crud.delete.borrar_subscripcion(con, cur, cedula, nombre)
+
+            crud.update.actualizar_subscripcion(con, cur, "Gratis", cedula)
+            crud.update.actualizar_pago(con, cur, None, None, cedula)
+
+            print("\nEliminación realizada con exito.")
+
+        elif select == "5":
+            print("\nIngrese el nombre de la lista que quiere eliminar.")
+            nombre = input()
+
+            print("\nIngrese la cedula del cliente al que corresponde la lista.")
+            cedula = input()
+            crud.delete.borrar_subscripcion(con, cur, nombre, cedula)
+            print("\nEliminación realizada con exito.")
+
+        elif select == "6":
+            print("\nIngrese la cedula del administrador que quiere eliminar.")
+            cedula = int(input())
+
+            if cedula != cedula_admin:
+                crud.delete.borrar_administrador(con, cur, cedula)
+            else:
+                print("El administrador no se puede eliminar a si mismo")
+
+        elif select == "0":
+            break
+
+        else:
+            print("\nNumero equivocado.")
+
+
 def admin_logueado(con, cur, data):
     """
         Función principal que maneja las opciones del administrador.
@@ -336,15 +495,15 @@ def admin_logueado(con, cur, data):
     print(f"\nBienvenido {data[1]} {data[2]}")
     sleep(1)
     # TODO: Agregar funcion para actualizar datos
-    # TODO: Crear modulo y funcion para eliminar datos
     # TODO: Agregar consultas y orden por cualquier valor
-    # TODO: Crear funcion para vaciar las tablas de la base de datos
 
     while True:
         print("\nSeleccione la accion que desea realizar:")
         print("1. Realizar consultas generales.")
         print("2. Realizar consultas especificas.")
         print("3. Ingresar nuevos datos a la base.")
+        print("4. Eliminar datos especificos de una tabla")
+        print("5. Eliminar datos completos de una tabla")
         print("0. Salir")
         case = input()
 
@@ -356,6 +515,12 @@ def admin_logueado(con, cur, data):
 
         elif case == "3":
             insertar_datos(con, cur)
+
+        elif case == "4":
+            insertar_datos(con, cur)
+
+        elif case == "5":
+            insertar_datos(con, cur, data[0])
 
         elif case == "0":
             print("\nSesion terminada.\n")

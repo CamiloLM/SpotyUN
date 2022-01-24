@@ -110,7 +110,7 @@ def consulta_especifica_listas(cur, cedula):
     cedula (int): Cedula del cliente
     """
     datos = [cedula]
-    cur.execute("SELECT * nombreLista FROM listaCanciones WHERE cedulaCliente = ?", datos)
+    cur.execute("SELECT * FROM listaCanciones WHERE cedulaCliente = ?", datos)
     return cur.fetchall()
 
 
