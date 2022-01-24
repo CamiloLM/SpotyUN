@@ -89,7 +89,7 @@ def agregar_subscripcion(con, cur, datos):
     con.commit()
 
 
-def agregar_cancion(con, cur, datos):
+def agregar_lista_canciones(con, cur, datos):
     """
     Agrega una cancion a una lista de canciones, estos datos deben estar en orden.
 

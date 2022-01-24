@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 import crud.read
 import crud.insert
+import crud.update
 import crud.delete
 from crud.create import crear_tablas
 from time import sleep
@@ -235,9 +236,9 @@ def consultas_especificas(cur):
             print("\nNumero equivocado.")
 
 
-def insertar_datos(con, cur):
+def ingresar_datos(con, cur):
     """
-        Función para insertar datos en las tablas de la BD.
+        Función para ingresar datos en las tablas de la BD.
 
         Parametros:
         con (sqlite3.Connection): Conexion a la base de datos.
@@ -252,7 +253,8 @@ def insertar_datos(con, cur):
         print("2. Insertar cliente.")
         print("3. Insertar plan.")
         print("4. Insertar subscripcion.")
-        print("5. Insertar administrador.")
+        print("5. Insertar lista de canciones.")
+        print("6. Insertar administrador.")
         print("0. Salir")
         select = input()
 
@@ -308,6 +310,16 @@ def insertar_datos(con, cur):
             print("\nInserción realizada con exito.")
 
         elif select == "5":
+            print("\nIngrese los datos para agregar la lista de canciones")
+            nombre = input("Nombre de la lista: ")
+            cedula = input("Numero de cedula del cliente: ")
+            codigo = input("Codigo de la canción: ")
+
+            datos = [nombre, int(cedula), int(codigo)]
+            crud.insert.agregar_lista_canciones(con, cur, datos)
+            print("\nInserción realizada con exito.")
+
+        elif select == "6":
             print("\nIngrese los datos del administrador")
             cedula = input("Numero de cedula: ")
             nombre = input("Nombre: ")
@@ -316,7 +328,138 @@ def insertar_datos(con, cur):
 
             datos = [int(cedula), nombre, apellido, correo]
             crud.insert.insertar_admin(con, cur, datos)
+            del cedula, nombre, apellido, correo
             print("\nInserción realizada con exito.")
+
+        elif select == "0":
+            break
+
+        else:
+            print("\nNumero equivocado.")
+
+
+def actualizar_datos(con, cur):
+    """
+        Función para actualizar datos en las tablas de la base de datos.
+
+        Parametros:
+        con (sqlite3.Connection): Conexion a la base de datos.
+        cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+    """
+    # TODO: Crear bloque logico para verificar los datos en todas las inserciones.
+    # TODO: Testear las inserciones en la BD.
+
+    while True:
+        print("\nSeleccione la acción que desea realizar::")
+        print("1. Actualizar cancion.")
+        print("2. Actualizar cliente.")
+        print("3. Actualizar plan.")
+        print("4. Actualizar subscripcion.")
+        print("5. Actualizar lista de canciones.")
+        print("6. Actualizar administrador.")
+        print("0. Salir")
+        select = input()
+
+        if select == "1":
+            print("\nIngrese los datos nuevos de la canción")
+            nombre = input("Nombre: ")
+            ubicacion = input("Ubicacion: ")
+            genero = input("Genero: ")
+            album = input("Album: ")
+            interprete = input("Interprete: ")
+
+            print("\nIngrese el codigo actual que hace referencia a esa cancion:")
+            codigo = int(input())
+
+            datos_cancion = [nombre, ubicacion, genero, album, interprete, codigo]
+            crud.update.actualizar_cancion(con, cur, datos_cancion)
+
+            del nombre, ubicacion, genero, album, interprete, codigo, datos_cancion
+            print("\Actualización realizada con exito.")
+
+        elif select == "2":
+            print("\nIngrese los datos nuevos del cliente")
+            nombre = input("Nombre: ")
+            apellido = input("Apellido: ")
+            correo = input("Correo electronico: ")
+            pais = input("Pais: ")
+            ciudad = input("Ciudad: ")
+            telefono = input("Numero de telefono: ")
+            credito = input("Numero tarjeta de credito: ")
+
+            print("\nIngrese la cedula del cliente:")
+            cedula = int(input())
+
+            datos_cliente = [nombre, apellido, correo, pais, ciudad, telefono, credito, cedula]
+            crud.update.actualizar_cliente(con, cur, datos_cliente)
+            del nombre, apellido, correo, pais, ciudad, telefono, credito, datos_cliente
+
+            bandera = input("Desea tambien actualizar el pago? S/n:")
+            if bandera == "S":
+                fecha = input("Fecha de pago: ")
+                pago = input("Pago realizado? 1 ó 0: ")
+                crud.update.actualizar_pago(fecha, pago, cedula)
+                del fecha, pago
+
+            del cedula
+            print("\Actualización realizada con exito.")
+
+        elif select == "3":
+            print("\nIngrese los datos nuevos del plan")
+            valor = float(input("Valor: "))
+            cantidad = int(input("Cantidad canciones: "))
+            descripcion = input("Descripcion: ")
+
+            print("\nIngrese el nombre del plan que va a modificar:")
+            nombre = input("Nombre: ")
+
+            datos_plan = [valor, cantidad, descripcion, nombre]
+            crud.update.actualizar_plan(con, cur, datos_plan)
+
+            del valor, cantidad, descripcion, nombre, datos_plan
+            print("\Actualización realizada con exito.")
+
+        elif select == "4":
+            print("\nIngrese el nombre nuevo del plan:")
+            nombre_plan = input()
+
+            print("\nIngrese la cedula del cliente que referencia la subscipción:")
+            cedula_cliente = int(input())
+
+            datos_subscripcion = [nombre_plan, cedula_cliente]
+            crud.insert.agregar_subscripcion(con, cur, datos_subscripcion)
+
+            del nombre_plan, cedula_cliente, datos_subscripcion
+            print("\Actualización realizada con exito.")
+
+        elif select == "5":
+            print("\nIngrese los datos nuevos de la lista de canciones.")
+            nombre_lista = input("Nombre lista: ")
+            codigo_cancion = int(input("Codigo canción: "))
+
+            print("\nIngrese la cedula del cliente que referencia la lista de canciones:")
+            cedula_cliente = int(input())
+
+            datos_lista_canciones = [nombre_lista, codigo_cancion, cedula_cliente]
+            crud.update.actualizar_lista_cancion(con, cur, datos_lista_canciones)
+
+            del nombre_lista, codigo_cancion, cedula_cliente, datos_lista_canciones
+            print("\Actualización realizada con exito.")
+
+        elif select == "6":
+            print("\nIngrese los datos nuevos del administrador")
+            nombre = input("Nombre: ")
+            apellido = input("Apellido: ")
+            correo = input("Correo electronico: ")
+
+            print("\nIngrese la cedula del cliente:")
+            cedula = int(input("Numero de cedula: "))
+
+            datos_administrador = [nombre, apellido, correo, cedula]
+            crud.update.actualizar_administrador(con, cur, datos_administrador)
+
+            del nombre, apellido, correo, cedula, datos_administrador
+            print("\Actualización realizada con exito.")
 
         elif select == "0":
             break
@@ -414,6 +557,7 @@ def eliminar_especifico(con, cur, cedula_admin):
         Parametros:
         con (sqlite3.Connection): Conexion a la base de datos.
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
+        cedula_admin (int): Cedula del administrador actual
     """
     # TODO: Añadir logica al input en todas las eliminaciones
     while True:
@@ -514,13 +658,16 @@ def admin_logueado(con, cur, data):
             consultas_especificas(cur)
 
         elif case == "3":
-            insertar_datos(con, cur)
+            ingresar_datos(con, cur)
 
         elif case == "4":
-            insertar_datos(con, cur)
+            actualizar_datos(con, cur)
 
         elif case == "5":
-            insertar_datos(con, cur, data[0])
+            eliminar_general(con, cur)
+
+        elif case == "6":
+            eliminar_especifico(con, cur, data[0])
 
         elif case == "0":
             print("\nSesion terminada.\n")

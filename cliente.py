@@ -4,7 +4,7 @@ from crud.read import (
     buscar_cancion_especifica, consulta_canciones, buscar_cancion_nombre, buscar_plan, buscar_cliente,
     consulta_nombre_listas, consulta_codigo_listas, consulta_planes, buscar_subscripcion
 )
-from crud.insert import agregar_cancion, agregar_subscripcion
+from crud.insert import agregar_lista_canciones, agregar_subscripcion
 from crud.update import actualizar_cliente, actualizar_pago, actualizar_subscripcion
 from crud.delete import borrar_cancion_lista, borrar_cliente, borrar_listaCanciones, borrar_subscripcion
 from player import reproductor
@@ -107,7 +107,7 @@ def canciones_cliente(con, cur, cedula, limite):
                 if nombre_lista:
                     datos = [nombre_lista, cedula, cancion[0]]
                     # Inserta la cancion en listaCanciones
-                    agregar_cancion(con, cur, datos)
+                    agregar_lista_canciones(con, cur, datos)
                     print("\nLa cancion ha sido añadida a la lista")
                     sleep(1)
                 else:
