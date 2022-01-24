@@ -1,3 +1,4 @@
+from sqlite3 import DataError
 from prettytable import PrettyTable
 from crud.read import (
     buscar_cancion_especifica, consulta_canciones, buscar_cancion_nombre, buscar_plan, buscar_cliente,
@@ -5,6 +6,7 @@ from crud.read import (
 )
 from crud.insert import agregar_cancion, agregar_subscripcion
 from crud.update import actualizar_cliente, actualizar_pago, actualizar_subscripcion
+from crud.delete import borrar_cancion_lista, borrar_cliente, borrar_listaCanciones, borrar_subscripcion
 from player import reproductor
 from correo import enviar_correo
 from time import sleep
@@ -38,6 +40,7 @@ def canciones_cliente(con, cur, cedula, limite):
         print("2. Buscar una cancion por nombre.")
         print("3. Reproducir cancion seleccionada.")
         print("4. Añadir cancion a una lista.")
+        print("5. Quitar cancion de una lista.")
         print("0. Volver al menu principal.")
         case = input()
 
@@ -116,6 +119,17 @@ def canciones_cliente(con, cur, cedula, limite):
                 print("Accion no realizada.")
                 sleep(2)
 
+        elif case == "5":
+            # TODO: Añadir logica para los inputs
+            print("\nEscriba el nombre de la lista que quiere modificar:")
+            nombre = input()
+
+            print("\nEscriba el numero de la cancion que quiere añadir:")
+            codigo = int(input())
+
+            borrar_cancion_lista(con, cur, nombre, cedula, codigo)
+            print("Operacion ejecutada")
+
         elif case == "0":
             print("\nVolviendo al menu de usuario.")
             break
@@ -156,7 +170,10 @@ def lista_canciones(con, cur, datos_cliente):
                 sleep(1)
         
         elif case == "2":
-            pass
+            print("\nEscriba el nombre de la lista que quiere eliminar:")
+            nombre = input()
+
+            borrar_listaCanciones(con, cur, nombre, datos_cliente[0])
         
         elif case == "3":
             # Consulta las listas del usuario
@@ -231,6 +248,8 @@ def informacion_cliente(con, cur, datos_cliente):
         
         elif case == "3":
             pass
+            #TODO: Como salir del bucle
+            # borrar_cliente(con, cur, datos_cliente[0])
         
         elif case == "0":
             print("\nVolviendo al menu de usuario.")
@@ -247,7 +266,8 @@ def informacion_planes(con, cur, datos_cliente):
         print("1. Informacion de mi plan")
         print("2. Consultar planes premium.")
         print("3. Subscribirme a un plan premium.")
-        print("4. Actualizar pago")
+        print("4. Eliminar mi subscripcion de un plan")
+        print("5. Actualizar pago")
         print("0. Volver al menu principal.")
         case = input()
 
@@ -289,7 +309,16 @@ def informacion_planes(con, cur, datos_cliente):
                 sleep(2)
         
         elif case == "4":
-            pass
+            actualizar_subscripcion(con, cur, "Gratis", datos_cliente[0])
+            actualizar_pago(con, cur, None, None, datos_cliente[0])
+            print("Subscripcion de pago eliminada.")
+        
+        elif case == "5":
+            nombre = buscar_subscripcion(cur, datos_cliente[0])[1]
+            if nombre != "Gratis":
+                registro_pago(con, cur, datos_cliente)
+            else:
+                print("El plan gratuito no requiere realizar pagos.")
         
         elif case == "0":
             print("\nVolviendo al menu de usuario.")
@@ -309,6 +338,7 @@ def cliente_logueado(con, cur, data):
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
     data (list): Datos del cliente.
     """
+    consulta_fecha_pago(con, cur, data)
     print(f"Bienvenido {data[1]} {data[2]}")
     sleep(1)
     # TODO: Testeo de las opciones de usuario

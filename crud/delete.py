@@ -1,170 +1,168 @@
-import sqlite3
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
-    try:
-        return sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
-    except sqlite3.Error:
-        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
-        
-def borrar_cancion(con,cur,codigo):
+def borrar_cancion(con, cur, codigo):
     """
-    Borra un registro en la tabla cancion, estos deben estar en orden.
+    Borra un registro en la tabla cancion.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
+    codigo (int): Codigo de la cancion.
     """
-    cur.execute("DELETE FROM cancion WHERE codigo = ?",[codigo])
+    cur.execute("DELETE FROM cancion WHERE codigo = ?", [codigo])
     con.commit()
 
-def borrar_canciones(con,cur):
+
+def borrar_canciones(con, cur):
     """
-    Borra todo el registro en la tabla cancion, estos deben estar en orden.
+    Borra todos los registros en la tabla cancion
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
     """
     cur.execute("DELETE FROM cancion")
     con.commit()
 
-def borrar_cliente(con,cur,cedula):
+
+def borrar_cliente(con, cur, cedula):
     """
-    Borra un registro en la tabla cliente, estos deben estar en orden.
+    Borra un registro en la tabla cliente.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
+    cedula (int): Cedula del cliente.
     """
-    cur.execute("DELETE FROM cliente WHERE cedula = ?",[cedula])
+    cur.execute("DELETE FROM cliente WHERE cedula = ?", [cedula])
     con.commit()
 
-def borrar_clientes(con,cur):
+
+def borrar_clientes(con, cur):
     """
-    Borra todo el registro en la tabla cliente, estos deben estar en orden.
+    Borra todos los registros en la tabla cliente.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
     """
     cur.execute("DELETE FROM cliente")
     con.commit()
 
-def borrar_plan(con,cur,nombre):
+
+def borrar_plan(con, cur, nombre):
     """
-    Borra un regristro en la tabla planes, estos deben estar en orden.
+    Borra un regristro en la tabla planes.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
+    nombre (str): Nombre del plan exactamente como aparece en a base.
     """
-    cur.execute("DELETE FROM planes WHERE nombre = ?",[nombre])
+    cur.execute("DELETE FROM planes WHERE nombre = ?", [nombre])
     con.commit()
 
-def borrar_planes(con,cur):
+
+def borrar_planes(con, cur):
     """
-    Borra todo el registro en la tabla planes, estos deben estar en orden.
+    Borra todos los registros en la tabla planes.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
     """
     cur.execute("DELETE FROM planes")
     con.commit()
 
-def borrar_subscripcion(con,cur,cedulaCliente,nombrePlan):
+
+def borrar_subscripcion(con, cur, cedulaCliente, nombrePlan):
     """
     Borra un registro en la tabla subscripciones, estos deben estar en orden.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
+    cedulaCliente (int): Cedula del cliente.
+    nombrePlan (str): Nombre del plan exactamente como aparece en a base.
     """
-    datos_subscripcion = [cedulaCliente,nombrePlan]
-    cur.execute("DELETE FROM subscripciones WHERE cedulaCliente = ? and nombrePlan = ?",datos_subscripcion)
+    datos_subscripcion = [cedulaCliente, nombrePlan]
+    cur.execute("DELETE FROM subscripciones WHERE cedulaCliente = ? and nombrePlan = ?", datos_subscripcion)
     con.commit()
 
-def borrar_subscripciones(con,cur):
+
+def borrar_subscripciones(con, cur):
     """
-    Borra todo el registro en la tabla subscripciones, estos deben estar en orden.
+    Borra todo el registro en la tabla subscripciones.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
     """
     cur.execute("DELETE FROM subscripciones")
     con.commit()
 
-def borrar_listaCanciones(con,cur,nombreLista):
+
+def borrar_listaCanciones(con, cur, nombreLista, cedulaCliente):
     """
-    Borra un registro en la tabla listaCanciones, estos deben estar en orden.
+    Borra un registro en la tabla listaCanciones.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
+    nombreLista (str): Nombre de la lista exactamente como aprece en la base.
+    cedulaCliente (int): Cedula del cliente.
     """
-    cur.execute("DELETE FROM listaCanciones WHERE nombreLista = ?",[nombreLista])
+    datos = [nombreLista, cedulaCliente]
+    cur.execute("DELETE FROM listaCanciones WHERE nombreLista = ? AND cedulaCliente = ?", datos)
     con.commit()
 
-def borrar_listasCanciones(con,cur):
+
+def borrar_cancion_lista(con, cur, nombre, cedula, codigo):
     """
-    Borra todo registro en la tabla listaCanciones, estos deben estar en orden.
+    Borra un registro en la tabla listaCanciones.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
+    nombre (str): Nombre de la lista exactamente como aprece en la base.
+    cedula (int): Cedula del cliente.
+    codigo (int): Codigo de la cancion.
+    """
+    datos = [nombre, cedula, codigo]
+    cur.execute("DELETE FROM listaCanciones WHERE nombreLista = ? AND cedulaCliente = ? AND codigoCancion = ?", datos)
+    con.commit()
+
+
+def borrar_listasCanciones(con, cur):
+    """
+    Borra todos los registros en la tabla listaCanciones.
+
+    Parametros:
+    con (sqlite3.Connection): Conexion a la base de datos.
+    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
     """
     cur.execute("DELETE FROM listaCanciones")
     con.commit()
 
-def borrar_administrador(con,cur,cedula):
+
+def borrar_administrador(con, cur, cedula):
     """
-    Borra un registro en administrador
+    Borra un registro la tabla administrador.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
+    cedula (int): Cedula del administrador.
     """
-    cur.execute("DELETE FROM administrador WHERE cedula = ?",[cedula])
+    cur.execute("DELETE FROM administrador WHERE cedula = ?", [cedula])
     con.commit()
 
-def borrar_administradores(con,cur):
+
+def borrar_administradores(con, cur):
     """
-    Borra un registro en administrador
+    Borra todos los registros en la tabla administrador.
 
     Parametros:
     con (sqlite3.Connection): Conexion a la base de datos.
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    valores (list): nombre, ubicacion, genero, album, interprete, codigo.
     """
     cur.execute("DELETE FROM administrador")
     con.commit()
-   
-
-if __name__ == "__main__":   
-    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
-    cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-    # borrar_cancion(conexion, cursor, 2)
-    # borrar_canciones(conexion, cursor)
-    # borrar_cliente(conexion,cursor,1000328521)
-    # borrar_clientes(conexion,cursor)
-    # borrar_plan(conexion,cursor,"Gratis")
-    # borrar_planes(conexion,cursor)
-    # borrar_subscripcion(conexion,cursor,1000328521,"Gratis")
-    # borrar_subscripciones(conexion,cursor)
-    # borrar_listaCanciones(conexion,cursor,"Test")
-    # borrar_listasCanciones(conexion,cursor)
-    # borrar_administrador(conexion,cursor,1000328521)
-    # borrar_administradores(conexion,cursor)
-    
