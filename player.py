@@ -11,11 +11,11 @@ def existencia(ruta_archivo):
     Comprueba la existencia de un archivo en el sistema.
     
     Parametros:
-        filePath (str): Direccion del archivo
+    filePath (str): Direccion del archivo
     
     Regresa:
-        True (bool): Si encuentra el archivo
-        False (bool): Si NO encuentra el archivo, imprime el error.
+    True (bool): Si encuentra el archivo
+    False (bool): Si NO encuentra el archivo, imprime el error.
     """
     try:
         with open(ruta_archivo, 'r'):

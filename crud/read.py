@@ -38,23 +38,7 @@ def buscar_cancion_especifica(cur, codigo):
     return cur.fetchone()
 
 
-def consulta_clientes(cur):
-    """Consulta todos los datos de la tabla cliente"""
-    cur.execute("SELECT * FROM cliente")
-    return cur.fetchall()
-
-
-def buscar_cliente(cur, cedula):
-    """
-    Consulta una cliente por su cedula.
     
-    Parametros:
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cedula (int): Cedula del cliente
-    """
-    datos = [cedula]
-    cur.execute("SELECT * FROM cliente WHERE cedula = ?", datos)
-    return cur.fetchone()
 
 
 def consulta_planes(cur):
@@ -141,20 +125,6 @@ def consulta_codigo_listas(cur, cedula, nombre):
     return cur.fetchall()
 
 
-def consulta_admins(cur):
-    """Consulta todos los datos de la tabla administrador"""
-    cur.execute("SELECT * FROM administrador")
-    return cur.fetchall()
 
 
-def buscar_admin(cur, cedula):
-    """
-    Consulta una administrador por su cedula.
-    
-    Parametros:
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cedula (int): Cedula del administrador
-    """
-    datos = [cedula]
-    cur.execute("SELECT * FROM administrador WHERE cedula = ?", datos)
-    return cur.fetchone()
+
