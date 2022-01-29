@@ -168,7 +168,7 @@ def menu_lista_canciones(con, cur):
     lista = ListaCanciones()
 
     while True:
-        print("\nSeleccione que opciones desea ver:")
+        print("\nSeleccione que opciones desea realizar:")
         print("1. Añadir canción a la lista.")
         print("2. Consulta general listas canciones.")
         print("3. Consulta especifica por cedula.")
@@ -181,19 +181,18 @@ def menu_lista_canciones(con, cur):
         case = input()
 
         if case == "1":
+            # TODO: Consultar si se puede evitar repetir canciones por cedula
             # Añadir canción a la lista
-            print("Ingrese la cedula del cliente:")
-            entrada_cedula = input()
-            print("Ingrese el codigo de la canción:")
-            entrada_codigo = input()
+            cedula = input("Ingrese la cedula del cliente: ")
+            codigo = input("Ingrese el codigo de la canción: ")
 
             # Verifica que las entradas sean enteros positivos
-            if entrada_cedula.isdigit() and entrada_codigo.isdigit():
+            if cedula.isdigit() and codigo.isdigit():
                 # Se asignan los valores al objeto lista
-                lista.cedula_cliente = int(entrada_cedula)
-                lista.codigo_cancion = int(entrada_codigo)
+                lista.cedula_cliente = int(cedula)
+                lista.codigo_cancion = int(codigo)
                 # Borrar las entradas ya que no se necesitan
-                del entrada_cedula, entrada_codigo
+                del cedula, codigo
                 # Excepcion por si los datos no estan en la tabla cliente y cancion
                 try:
                     # Llama a la funcion que agrega la cancion a la lista
