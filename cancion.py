@@ -33,7 +33,7 @@ class Cancion:
         cur.execute("INSERT INTO cancion VALUES (?, ?, ?, ?, ?, ?, ?)", cancion)
         con.commit()    
  
-    def consulta_canciones(self, cur, limite):
+    def consulta_canciones(self, cur, campo="codigo"):
         """
         Consulta todos los datos de la tabla cancion
         
@@ -41,8 +41,7 @@ class Cancion:
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
         limite (int): Limite de canciones por plan
         """
-        datos = [limite]
-        cur.execute("SELECT * FROM cancion LIMIT ?", datos)
+        cur.execute("SELECT * FROM cancion ORDER BY {}".format(campo))
         return cur.fetchall()
 
     def buscar_cancion_especifica(self, cur, codigo):

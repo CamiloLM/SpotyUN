@@ -31,9 +31,9 @@ class Subscripciones:
         cur.execute("INSERT INTO subscripciones VALUES (?, ?)", datos)
         con.commit()    
 
-    def consulta_subscripciones(self, cur):
+    def consulta_subscripciones(self, cur, campo="cedulaCliente"):
         """Consulta todos los datos de la tabla subscripciones"""
-        cur.execute("SELECT * FROM subscripciones")
+        cur.execute("SELECT * FROM subscripciones ORDER BY {}".format(campo))
         return cur.fetchall()  
 
     def buscar_subscripcion(self, cur, cedula):
@@ -92,11 +92,12 @@ class Subscripciones:
 if __name__ == "__main__":
     con = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
     cur = con.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-    subscripciones = Subscripciones(12346,2)
+    subscripciones = Subscripciones(12345,1)
     # subscripciones.borrar_subscripciones(con, cur)
     # subscripciones.borrar_subscripcion(con, cur, 12346, 2)
-    subscripciones.setcodigo(3)
-    subscripciones.actualizar_subscripcion(con, cur)
+    # subscripciones.setcodigo(3)
+    # subscripciones.actualizar_subscripcion(con, cur)
     # subscripciones.buscar_subscripcion(cur,12345)
-    # subscripciones.consulta_subscripciones(cur)
     # subscripciones.agregar_subscripcion(con, cur,1) 
+    print(subscripciones.consulta_subscripciones(cur))
+    print(subscripciones.consulta_subscripciones(cur, "codigoPlan"))
