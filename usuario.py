@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 
 
 class Usuario(ABC):
-    def __init__(self, cedula, nombre, apellido, correo):
-        self._cedula = cedula
-        self._nombre = nombre
-        self._apellido = apellido
-        self._correo = correo
+    def __init__(self):
+        self._cedula = None
+        self._nombre = None
+        self._apellido = None
+        self._correo = None
 
     @property
     @abstractmethod
@@ -14,7 +14,7 @@ class Usuario(ABC):
 
     @property
     @abstractmethod
-    def datos(self): pass
+    def datos_usuario(self): pass
 
     @abstractmethod
     def ingresar_usuario(self): pass
