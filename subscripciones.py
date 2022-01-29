@@ -99,5 +99,5 @@ if __name__ == "__main__":
     # subscripciones.actualizar_subscripcion(con, cur)
     # subscripciones.buscar_subscripcion(cur,12345)
     # subscripciones.agregar_subscripcion(con, cur,1) 
-    print(subscripciones.consulta_subscripciones(cur))
-    print(subscripciones.consulta_subscripciones(cur, "codigoPlan"))
+    # print(subscripciones.consulta_subscripciones(cur))
+    # print(subscripciones.consulta_subscripciones(cur, "codigoPlan"))
