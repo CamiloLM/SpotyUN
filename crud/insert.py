@@ -24,30 +24,10 @@ def insertar_canciones(con, cur, canciones):
     con.commit()
 
 
-def insertar_cliente(con, cur, cliente):
-    """
-    Ingresa datos en la tabla cliente, estos datos deben estar en orden.
-
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cliente (list): cedula, nombre, apellido, correo, etc.
-    """
-    cur.execute("INSERT INTO cliente VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", cliente)
-    con.commit()
 
 
-def insertar_clientes(con, cur, clientes):
-    """
-    Ingresa multiples datos en la tabla cliente.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    clientes (list): Lista con los datos de los clientes.
-    """
-    cur.executemany("INSERT INTO cliente VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", clientes)
-    con.commit()
+
 
 
 def insertar_plan(con, cur, plan):
@@ -102,14 +82,4 @@ def agregar_lista_canciones(con, cur, datos):
     con.commit()
 
 
-def insertar_admin(con, cur, datos):
-    """
-    Ingresa datos en la tabla administrador, estos datos deben estar en orden.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cliente (list): cedula, nombre, apellido, correo.
-    """
-    cur.execute("INSERT OR IGNORE INTO administrador VALUES (?, ?, ?, ?)", datos)
-    con.commit()

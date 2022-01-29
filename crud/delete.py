@@ -23,29 +23,10 @@ def borrar_canciones(con, cur):
     con.commit()
 
 
-def borrar_cliente(con, cur, cedula):
-    """
-    Borra un registro en la tabla cliente.
-
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cedula (int): Cedula del cliente.
-    """
-    cur.execute("DELETE FROM cliente WHERE cedula = ?", [cedula])
-    con.commit()
 
 
-def borrar_clientes(con, cur):
-    """
-    Borra todos los registros en la tabla cliente.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    """
-    cur.execute("DELETE FROM cliente")
-    con.commit()
+
 
 
 def borrar_plan(con, cur, nombre):
@@ -143,26 +124,4 @@ def borrar_listasCanciones(con, cur):
     con.commit()
 
 
-def borrar_administrador(con, cur, cedula):
-    """
-    Borra un registro la tabla administrador.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cedula (int): Cedula del administrador.
-    """
-    cur.execute("DELETE FROM administrador WHERE cedula = ?", [cedula])
-    con.commit()
-
-
-def borrar_administradores(con, cur):
-    """
-    Borra todos los registros en la tabla administrador.
-
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    """
-    cur.execute("DELETE FROM administrador")
-    con.commit()

@@ -18,46 +18,10 @@ def actualizar_cancion(con, cur, valores):
     con.commit()
 
 
-def actualizar_cliente(con, cur, valores):
-    """
-    Actualiza datos en la tabla cliente, estos datos deben estar en orden.
-
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cliente (list): Nombre (str), apellido (str), correo (str), pais, ciudad, telefono, targetaCredito, cedula(int).
-    """
-    cur.execute('''
-        UPDATE cliente
-        SET nombre = ?,
-        apellido = ?,
-        correo = ?,
-        pais = ?,
-        ciudad = ?,
-        telefono = ?,
-        targetaCredito = ?
-        WHERE cedula = ?''', valores)
-    con.commit()
 
 
-def actualizar_pago(con, cur, fecha, pago, cedula):
-    """
-    Ingresa un pago en la tabla cliente, estos datos deben estar en orden.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    fecha (str): Fecha de vencimiento.
-    pago (int): Si el cliente pago 1, si no pago 0.
-    cedula (int): Cedula del cliente.
-    """
-    datos = [fecha, pago, cedula]
-    cur.execute('''
-        UPDATE cliente
-        SET fechaPago = ?,
-        pago = ?
-        WHERE cedula = ?''', datos)
-    con.commit()
+
 
 
 def actualizar_plan(con, cur, valores):
@@ -111,19 +75,4 @@ def actualizar_lista_cancion(con, cur, datos):
     con.commit()
 
 
-def actualizar_administrador(con, cur, valores):
-    """
-    Actualiza datos en la tabla administrador, estos datos deben estar en orden.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cliente (list): Nombre (str), apellido (str), correo (str), cedula (int).
-    """
-    cur.execute('''
-        UPDATE administrador
-        SET nombre = ?,
-        apellido = ?,
-        correo = ?
-        WHERE cedula = ?''', valores)
-    con.commit()
