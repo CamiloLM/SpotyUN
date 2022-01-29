@@ -1,6 +1,6 @@
 # import os
 import smtplib  # Librería para enviar correos electrónicos desde python
-from email.message import EmailMessage
+from email.message import EmailMessage  # Objeto para crear un mensaje por correo
 
 
 def enviar_correo(destinatario, contenido):
@@ -9,15 +9,20 @@ def enviar_correo(destinatario, contenido):
     
     Parametros:
     destinatario (string): Correo electronico del destinatario
-    mensaje (string): Cuerpo del mensaje que se va a enviar
+    mensaje (string): Tabla HTML con las canciones del cliente.
     """
+    # Credenciales del correo
     EMAIL_ADDRESS = "soporte.spotyun@gmail.com"
     EMAIL_PASSWORD = "Y@hYycq*]6br$J6;KUs6"
 
-    mensaje = EmailMessage()
+    mensaje = EmailMessage()  # Se crea una nueva instancia del codigo
+
+    # Asignamos desde donde se envia, hacia donde y el asunto
     mensaje['Subject'] = "Lista de SpotyUN"
     mensaje['From'] = EMAIL_ADDRESS
     mensaje['To'] = destinatario
+
+    # Creo el mensaje con estructura HTML
     mensaje.add_alternative(
         """\
         <html>
@@ -37,7 +42,8 @@ def enviar_correo(destinatario, contenido):
         </html>
         """, subtype = "html")
 
+    # Se establece la conexion con el servidor de gmail
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        smtp.send_message(mensaje)
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)  # Inicia sesion con las credenciales
+        smtp.send_message(mensaje)  # Envia el mensaje almacenado
         print("Mensaje enviado con exito, revise su correo.")

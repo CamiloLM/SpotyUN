@@ -69,17 +69,7 @@ def agregar_subscripcion(con, cur, datos):
     con.commit()
 
 
-def agregar_lista_canciones(con, cur, datos):
-    """
-    Agrega una cancion a una lista de canciones, estos datos deben estar en orden.
 
-    Parametros:
-    con (sqlite3.Connection): Conexion a la base de datos.
-    cur (sqlite3.Cursor): Cursor para realizar las operaciones.
-    cliente (list): nombreLista, cedulaCliente, codigoCancion.
-    """
-    cur.execute("INSERT INTO listaCanciones VALUES (?, ?, ?)", datos)
-    con.commit()
 
 
 

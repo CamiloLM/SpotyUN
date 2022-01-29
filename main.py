@@ -1,12 +1,16 @@
 import sqlite3  # Modulo para realizar operaciones a la base de datos
 from create import crear_tablas
-from time import sleep  # Funcion estetica para controlar el comportamiento de la consola.
+from os import environ
+
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
 
 
 def conexion_base_datos():
     """Crea una conexión con la base de datos, si no existe se crea una vacia."""
     try:
-        return sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
+        conn = sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
+        conn.execute("PRAGMA foreign_keys = 1")  # Activa la selectividad de las llaves foraneas.
+        return conn
     except sqlite3.Error:
         print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
 
@@ -67,7 +71,6 @@ if __name__ == "__main__":
 
         elif case == "0":
             print("\nHasta Luego.")
-            sleep(1)
             conexion.close()
             break
 

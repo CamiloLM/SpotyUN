@@ -1,13 +1,4 @@
 from usuario import Usuario
-import sqlite3  # Modulo para realizar operaciones a la base de datos
-
-
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
-    try:
-        return sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
-    except sqlite3.Error:
-        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
 
 
 class Cliente(Usuario):
@@ -19,6 +10,13 @@ class Cliente(Usuario):
         self._tarjeta_credito = tarjeta_credito
         self._fecha_pago = fecha_pago
         self._pago = pago
+
+
+    def __str__(self) -> str:
+        return (
+            "Cedula: {}\nNombre: {}\nApellido: {}\nCorreo: {}\nPais: {}\nCiudad: {}\nTelefono: {}\nTarjeta credito: {}\nFecha pago: {}\nPago: {}".format(
+            self._cedula, self._nombre, self._apellido, self._correo, self._pais, self._ciudad, self._telefono, self._tarjeta_credito, self._fecha_pago, self._pago)
+        )
 
 
     @property
@@ -59,7 +57,8 @@ class Cliente(Usuario):
         con (sqlite3.Connection): Conexion a la base de datos.
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
         """
-        datos = (self._cedula, self._nombre, self._apellido, self._correo, self._pais, self._ciudad, self._telefono, self._tarjeta_credito, self._fecha_pago, self._pago)
+        datos = (self._cedula, self._nombre, self._apellido, self._correo, self._pais, self._ciudad, self._telefono,
+            self._tarjeta_credito, self._fecha_pago, self._pago)
         cur.execute("INSERT OR IGNORE INTO cliente VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", datos)
         con.commit()
 
@@ -97,7 +96,8 @@ class Cliente(Usuario):
         con (sqlite3.Connection): Conexion a la base de datos.
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
         """
-        datos = (self._nombre, self._apellido, self._correo, self._pais, self._ciudad, self._telefono, self._tarjeta_credito, self._cedula)
+        datos = (self._nombre, self._apellido, self._correo, self._pais, self._ciudad, self._telefono,
+            self._tarjeta_credito, self._cedula)
         cur.execute('''
             UPDATE OR IGNORE cliente
             SET nombre = ?,
@@ -154,14 +154,12 @@ class Cliente(Usuario):
         con.commit()
 
 
+# def menu_cliente(con, cur):
 if __name__ == "__main__":
-    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
-    cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-
     clt1 = Cliente(123, "Camilo", "Londoño", "camilo@correo.com", "Colombia", "Bogota", 123456789, 987654321, None, None)
-    print(clt1.cedula, clt1.datos)
+    print(clt1)
 
-    clt1.ingresar_usuario(conexion, cursor)
+    # clt1.ingresar_usuario(con, cur)
 
     # clt1.cedula = 123
     # print(clt1.consulta_usuario_especifica(cursor))

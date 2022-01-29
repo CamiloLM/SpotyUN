@@ -1,18 +1,13 @@
 from usuario import Usuario
-import sqlite3  # Modulo para realizar operaciones a la base de datos
-
-
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
-    try:
-        return sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
-    except sqlite3.Error:
-        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
 
 
 class Administrador(Usuario):
     def __init__(self, cedula, nombre, apellido, correo):
         super().__init__(cedula, nombre, apellido, correo)
+
+
+    def __str__(self) -> str:
+        return ("Cedula: {}\nNombre: {}\nApellido: {}\nCorreo: {}".format(self._cedula, self._nombre, self._apellido, self._correo))
 
 
     @property
@@ -122,16 +117,12 @@ class Administrador(Usuario):
         con.commit()
 
 
-
-
+# def menu_administrador(con, cur):
 if __name__ == "__main__":
-    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
-    cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-
     admin1 = Administrador(123, "Camilo", "Londoño", "camilo@correo.com")
-    print(admin1.cedula, admin1.datos)
+    print(admin1)
     
-    admin1.ingresar_usuario(conexion, cursor)
+    # admin1.ingresar_usuario(conexion, cursor)
 
     # admin1.cedula = 123
     # print(admin1.consulta_usuario_especifica(cursor))
