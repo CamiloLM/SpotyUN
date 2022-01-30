@@ -13,15 +13,30 @@ def conexion_base_datos():
 
 class Subscripciones:
     def __init__(self):
-        self.cedulaCliente=None
-        self.codigoPlan=None
+        self.__cedulaCliente=None
+        self.__codigoPlan=None
 
-    # def setcodigo(self,codigo):
-    #      self.codigoPlan= codigo
-    # def setCedula(self,cedula):
-    #      self.cedula = cedula    
+    def __str__(self) -> str:
+        return (
+            "cedulaCliente: {}\ncodigoPlan: {}".format(
+            self.__cedulaCliente, self.__codigoPlan))    
+
+    @property
+    def datos_subscripcion(self):
+        return self.__cedulaCliente,self.__codigoPlan
+    @property
+    def codigo(self):
+        return self.__cedulaCliente
+
+    @datos_subscripcion.setter
+    def datos_subscripcion(self,listaValores):
+         self.__cedulaCliente,self.__codigoPlan = listaValores
+    @codigo.setter
+    def codigo(self,cedula):
+         self.__cedulaCliente = cedula
+  
         
-    def agregar_subscripcion(self, con, cur, datos):
+    def agregar_subscripcion(self, con, cur):
         """
         Agrega un cliente a un plan, estos datos deben estar en orden.
 
@@ -30,16 +45,17 @@ class Subscripciones:
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
         cliente (list): cedulaCliente, codigoPlan.
         """
-        datos=[self.cedulaCliente,self.codigoPlan]
-        cur.execute("INSERT INTO subscripciones VALUES (?, ?)", datos)
-        con.commit()    
+        datos=[self.__cedulaCliente,self.__codigoPlan]
+        cur.execute("INSERT OR IGNORE INTO subscripciones VALUES (?, ?)", datos)
+        con.commit()
+        return cur.rowcount     
 
     def consulta_subscripciones(self, cur, campo="cedulaCliente"):
         """Consulta todos los datos de la tabla subscripciones"""
         cur.execute("SELECT * FROM subscripciones ORDER BY {}".format(campo))
         return cur.fetchall()  
 
-    def buscar_subscripcion(self, cur, cedula):
+    def buscar_subscripcion(self, cur):
         """
         Consulta un plan por su nombre.
         
@@ -47,7 +63,7 @@ class Subscripciones:
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
         cedulaCliente (int): Cedula del cliente
         """
-        datos = [cedula]
+        datos = [self.__cedulaCliente]
         cur.execute("SELECT * FROM subscripciones WHERE cedulaCliente = ?", datos)
         return cur.fetchone() 
 
@@ -60,14 +76,15 @@ class Subscripciones:
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
         datos (list): Codigo del plan (int), cedula del cliente (int).
         """
-        datos = [self.codigoPlan,self.cedulaCliente]
+        datos = [self.__codigoPlan,self.__cedulaCliente]
         cur.execute('''
-            UPDATE subscripciones
+            UPDATE OR IGNORE subscripciones
             SET codigoPlan = ?
             WHERE cedulaCliente = ?''', datos)
-        con.commit()    
+        con.commit() 
+        return cur.rowcount   
 
-    def borrar_subscripcion(self, con, cur, cedulaCliente, codigoPlan):
+    def borrar_subscripcion(self, con, cur):
         """
         Borra un registro en la tabla subscripciones, estos deben estar en orden.
 
@@ -77,9 +94,9 @@ class Subscripciones:
         cedulaCliente (int): Cedula del cliente.
         nombrePlan (str): Codigo del plan exactamente como aparece en a base.
         """
-        datos_subscripcion = [cedulaCliente, codigoPlan]
-        cur.execute("DELETE FROM subscripciones WHERE cedulaCliente = ? and codigoPlan = ?", datos_subscripcion)
-        con.commit()     
+        cur.execute("DELETE FROM subscripciones WHERE cedulaCliente = ?", [self.__cedulaCliente])
+        con.commit()
+        return cur.rowcount      
 
     def borrar_subscripciones(self, con, cur):
         """
@@ -90,7 +107,8 @@ class Subscripciones:
         cur (sqlite3.Cursor): Cursor para realizar las operaciones.
         """
         cur.execute("DELETE FROM subscripciones")
-        con.commit()      
+        con.commit()
+        return cur.rowcount       
 
 def menu_subscripción(con, cur):
     subscripciones = Subscripciones()
@@ -113,8 +131,7 @@ def menu_subscripción(con, cur):
 
             # Verficacion de que los datos que son ingresados son correctos
             if cedulaCliente.isdigit() and codigoPlan.isdigit():
-                subscripciones.datos_cancion = [cedulaCliente, codigoPlan]  # Actualiza los datos del objeto subscripciones
-
+                subscripciones.datos_subscripcion = [cedulaCliente, codigoPlan]  # Actualiza los datos del objeto subscripciones
                 # Se borran las variables que ya no se utilizan
                 del cedulaCliente, codigoPlan
 
@@ -188,7 +205,7 @@ def menu_subscripción(con, cur):
 
         elif case == "4":
             # Actualizar los datos de canción
-            print("\nIngrese los datos nuevos de la nueva canción")
+            print("\nIngrese los datos nuevos de la nueva subscripción")
             cedulaCliente = input("\nIngrese su cédula: ")
             codigoPlan = input("Ingrese codigo del plan: ")
 
@@ -197,8 +214,8 @@ def menu_subscripción(con, cur):
 
             # Verficacion de que los datos que son ingresados son correctos
             if cedulaCliente.isdigit() and codigoPlan.isdigit():
-                subscripciones.datos_cancion = [cedulaCliente, codigoPlan]  # Actualiza los datos del objeto subscripciones
-
+                subscripciones.datos_subscripcion = [cedulaCliente, codigoPlan]  # Actualiza los datos del objeto subscripciones
+                subscripciones.cedula = int(cedula)
                 # Se borran las variables que ya no se utilizan
                 del cedulaCliente, codigoPlan
 
@@ -217,12 +234,12 @@ def menu_subscripción(con, cur):
             cedula = input()
 
             if cedula.isdigit():
-                cedula.cedula = int(cedula)
+                subscripciones.cedula = int(cedula)
 
                 del cedula  # Se borra la variable que no se va a utilizar
 
                 # Llama al metodo que actualiza la subscripción en la base de datos
-                cambios = cedula.borrar_subscripcion(con, cur)
+                cambios = subscripciones.borrar_subscripcion(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -236,7 +253,7 @@ def menu_subscripción(con, cur):
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
-                subscripciones = subscripciones.borrar_subscripciones(con, cur)
+                cambios = subscripciones.borrar_subscripciones(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
