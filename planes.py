@@ -16,7 +16,7 @@ def conexion_base_datos():
         print(sqlite3.Error)
 
 
-class plan:
+class Plan:
     def __init__(self):
         """Método constructor, inicializa los argumentos del objeto 'Plan'."""
         self.__codigo = ""
@@ -144,7 +144,7 @@ class plan:
 
 
 def menu_planes(con, cur):
-    planes = plan()
+    planes = Plan()
     while True:
         print("\nSeleccione que opciones desea realizar:")
         print("1. Registrar plan.")

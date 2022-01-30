@@ -217,7 +217,7 @@ def menu_cliente(con, cur):
             tarjeta_credito = input("Ingrese el numero de tarjeta de credito: ")
             
             # Verficacion de que los datos que son ingresados son correctos
-            if cedula.isdigit() and nombre.isalpha() and apellido.isalpha() and telefono.isdigit() and tarjeta_credito.isdigit():
+            if cedula.isdigit() and nombre.isalpha() and apellido.isalpha() and correo and telefono.isdigit() and tarjeta_credito.isdigit():
                 cliente.cedula = int(cedula)  # Actualiza la cedula del objeto cliente
                 cliente.datos_usuario = [nombre, apellido, correo, pais, ciudad, int(telefono), int(tarjeta_credito)]  # Actualiza los datos usuario del objeto cliente
 
@@ -317,7 +317,7 @@ def menu_cliente(con, cur):
                 del cedula, nombre, apellido, correo, pais, ciudad, telefono, tarjeta_credito
                 
                 # Llama al metodo que actualiza el usuario en la base de datos
-                cambios = cliente.actualizar_usuario(conexion, cursor)
+                cambios = cliente.actualizar_usuario(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -345,7 +345,7 @@ def menu_cliente(con, cur):
                 del cedula, fecha, mes, año, dia, nueva_fecha
 
                 # Llama al metodo que actualiza el usuario en la base de datos
-                cambios = cliente.actualizar_datos_pago(conexion, cursor)
+                cambios = cliente.actualizar_datos_pago(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -364,7 +364,7 @@ def menu_cliente(con, cur):
                 del cedula  # Se borra la variable que no se va a utilizar
 
                 # Llama al metodo que actualiza el usuario en la base de datos
-                cambios = cliente.borrar_usuario_especifico(conexion, cursor)
+                cambios = cliente.borrar_usuario_especifico(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -378,7 +378,7 @@ def menu_cliente(con, cur):
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
-                cambios = cliente.borrar_usuario_general(conexion, cursor)
+                cambios = cliente.borrar_usuario_general(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:

@@ -264,7 +264,7 @@ def menu_administrador(con, cur):
                 del cedula, nombre, apellido, correo
                 
                 # Llama al metodo que actualiza el usuario en la base de datos
-                cambios = admin.actualizar_usuario(conexion, cursor)
+                cambios = admin.actualizar_usuario(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -283,7 +283,7 @@ def menu_administrador(con, cur):
                 del cedula  # Se borra la variable que no se va a utilizar
 
                 # Llama al metodo que actualiza el usuario en la base de datos
-                cambios = admin.borrar_usuario_especifico(conexion, cursor)
+                cambios = admin.borrar_usuario_especifico(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -297,7 +297,7 @@ def menu_administrador(con, cur):
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
-                cambios = admin.borrar_usuario_general(conexion, cursor)
+                cambios = admin.borrar_usuario_general(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:

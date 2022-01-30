@@ -1,5 +1,4 @@
 import sqlite3
-from abc import ABC, abstractmethod
 from prettytable import PrettyTable
 
 def conexion_base_datos():

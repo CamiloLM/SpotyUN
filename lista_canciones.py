@@ -2,6 +2,8 @@ import sqlite3
 from sqlite3 import IntegrityError
 from prettytable import PrettyTable
 from correo import enviar_correo
+from cancion import Cancion
+# from planes import Plan
 
 
 def conexion_base_datos():
@@ -44,7 +46,7 @@ class ListaCanciones():
         self.__codigo_cancion = codigo
 
 
-    def ingresar_cancion_lista(self, con, cur) -> None:
+    def ingresar_cancion_lista(self, con, cur) -> int:
         """
         Agrega una cancion a la tabla listaCanciones.
 
@@ -70,9 +72,9 @@ class ListaCanciones():
         cedula (int): Cedula del cliente.
 
         Regresa:
-        Lista de tuplas con los codigos de las canciones del cliente.
+        datos_lista (list): Lista de tuplas con los datos de lista canciones del cliente.
         """
-        cur.execute("SELECT codigoCancion FROM listaCanciones WHERE cedulaCliente = ?", [cedula])
+        cur.execute("SELECT * FROM listaCanciones WHERE cedulaCliente = ?", [cedula])
         return cur.fetchall()
 
 
@@ -86,13 +88,13 @@ class ListaCanciones():
         campo (str): Nombre de la columna por la que se va a ordenar.
 
         Regresa:
-        Lista de tuplas con toda la información de la tabla listaCanciones
+        datos_lista (list): Lista de tuplas con toda la información de la tabla listaCanciones
         """
         cur.execute("SELECT * FROM listaCanciones ORDER BY {}".format(campo))
         return cur.fetchall()
 
 
-    def borrar_lista_especifica(self, con, cur) -> None:
+    def borrar_lista_especifica(self, con, cur) -> int:
         """
         Borra un registro en la tabla listaCanciones.
 
@@ -108,7 +110,7 @@ class ListaCanciones():
         return cur.rowcount
 
 
-    def borrar_cancion_lista(self, con, cur) -> None:
+    def borrar_cancion_lista(self, con, cur) -> int:
         """
         Borra un registro en la tabla listaCanciones.
 
@@ -125,7 +127,7 @@ class ListaCanciones():
         return cur.rowcount
 
 
-    def borrar_lista_general(self, con, cur) -> None:
+    def borrar_lista_general(self, con, cur) -> int:
         """
         Borra todos los registros en la tabla listaCanciones.
 
@@ -169,56 +171,177 @@ def menu_lista_canciones(con, cur):
 
     while True:
         print("\nSeleccione que opciones desea realizar:")
-        print("1. Añadir canción a la lista.")
-        print("2. Consulta general listas canciones.")
-        print("3. Consulta especifica por cedula.")
-        print("4. Eliminar canción de la lista.")
-        print("5. Eliminar lista de canciones por cedula.")
-        print("6. Eliminar tabla lista canciones.")
+        print("1. Añadir canción a una lista.")
+        print("2. Consulta general listas de canciones.")
+        print("3. Consulta especifica lista de canciones.")
+        print("4. Eliminar canción de una lista.")
+        print("5. Eliminar una lista de canciones.")
+        print("6. Eliminar tabla lista de canciones.")
         print("7. Enviar lista al correo electronico.")
         print("8. Reproducir lista de canciones.")
         print("0. Salir del programa.")
         case = input()
 
+
         if case == "1":
-            # TODO: Consultar si se puede evitar repetir canciones por cedula
-            # Añadir canción a la lista
+            # Añadir canción a una lista especificada por la cedula
             cedula = input("Ingrese la cedula del cliente: ")
             codigo = input("Ingrese el codigo de la canción: ")
 
             # Verifica que las entradas sean enteros positivos
             if cedula.isdigit() and codigo.isdigit():
-                # Se asignan los valores al objeto lista
-                lista.cedula_cliente = int(cedula)
-                lista.codigo_cancion = int(codigo)
-                # Borrar las entradas ya que no se necesitan
-                del cedula, codigo
-                # Excepcion por si los datos no estan en la tabla cliente y cancion
-                try:
-                    # Llama a la funcion que agrega la cancion a la lista
-                    lista.ingresar_cancion_lista(con, cur)
-                except IntegrityError:
-                    print("Los datos ingresados no corresponden a ningun cliente o canción.")
+                cedula = int(cedula)
+                codigo = int(codigo)
+                
+                # TODO: Consultar el limite de canciones del cliente
+                # Verifica que el usuario no tenga la cancion ya agregada a la lista
+                datos_lista = lista.consulta_lista_especifica(cur, cedula)
+                if codigo not in (elem for datos_cancion in datos_lista for elem in datos_cancion):
+                    # Se asignan los valores al objeto lista
+                    lista.cedula_cliente = cedula
+                    lista.codigo_cancion = codigo
+
+                    # Borrar las entradas ya que no se necesitan
+                    del cedula, codigo
+
+                    # Excepcion por si los datos no estan en la tabla cliente y cancion
+                    try:
+                        # Llama a la funcion que agrega la cancion a la lista
+                        cambios = lista.ingresar_cancion_lista(con, cur)
+                        # Verifica si se realizaron cambios en la base de datos
+                        if cambios != 0:
+                            print("\nCanción agredaga con exito.")
+                    except IntegrityError:
+                        print("Los datos ingresados no corresponden a ningun cliente o canción.")
+                else:
+                    print("La canción que ingreso ya ha sido agregada")
             else:
-                print("Los datos que ingreso no son correctos.")
+                print("Los datos que ingreso no son correctos, ingrese enteros positivos.")
+
 
         elif case == "2":
-            pass
+            # Consulta general de lista de canciones por campo
+            mi_tabla = PrettyTable()  # Crea el objeto tabla
+            # Asgina los nombres de los campos en la tabla
+            mi_tabla.field_names = ["cedulaCliente", "codigoCancion"]
+            campo = "cedulaCliente"  # Campo por el que se va a ordenar
+
+            while True:
+                # Excepcion por si se ingresan un campo que no este en la tabla
+                try:
+                    # Busqueda general en la tabla lista canciones pasando el campo por el que ordena
+                    datos_lista = lista.consulta_lista_general(cur, campo)
+
+                    if datos_lista:
+                        mi_tabla.add_rows(datos_lista)  # Añade datos las filas a la tabla
+
+                        print("")
+                        print(mi_tabla)  # Imprime la tabla con los datos añadidos
+
+                        # Bandera logica por si se quiere ordenar un campo
+                        bandera = input("Desea ordenar la busqueda por un campo (S/n): ")
+                        if bandera == "S" or bandera == "s":
+                            mi_tabla.clear_rows()  # Se limpia los datos en las filas
+                            campo = input("Ingrese el campo por el que quiere ordenar la busqueda: ").strip()
+                            print(campo)
+                        else:
+                            break
+                    else:
+                        print("\nLa tabla no tiene datos")
+                        break
+                except sqlite3.OperationalError:
+                    print("\nLa tabla no cuenta con el campo que ha ingresado.")
+                    break
+
 
         elif case == "3":
-            pass
+            # Consulta general de la lista de canciones por campo
+            mi_tabla = PrettyTable()  # Crea el objeto tabla
+            mi_tabla.field_names = ["Codigo", "Nombre", "Ubicación", "Género", "Album", "Interprete", "Fotografía"]
+
+            cedula = input("\nIngrese número de cedula: ")
+            # Verficacion de los datos que son ingresados son correctos
+            if cedula.isdigit():
+                # Actualiza la cedula del objeto cliente
+                lista.cedula_cliente = int(cedula)
+                # Almacena los datos de la lita del cliente
+                datos_lista = lista.consulta_lista_especifica(cur, lista.cedula_cliente)
+
+                # Si la busqueda encuentra resultados se busca la informacion de la cancion
+                if datos_lista:
+                    cancion = Cancion()  # Crea un objeto cancion para realizar la busqueda
+
+                    for elem in datos_lista:
+                        cancion.codigo = elem[1]  # Asigna los codigos de la lista al objeto cancion
+                        datos_cancion = cancion.buscar_cancion_especifica(cur)
+                        mi_tabla.add_row(datos_cancion)  # La informacion de cada cancion se agrega a la tabla
+
+                    print("")
+                    print(mi_tabla)  # Imprime los datos de la tabla
+                else:
+                    print("\nLa tabla no tiene datos")
+            else:
+                print("\nEl valor de la cedula ingresado no es valido")
+
 
         elif case == "4":
-            pass
+            # Eliminar canción a una lista especificada por la cedula
+            cedula = input("\nIngrese la cedula del cliente que corresponde a la lista: ")
+            codigo = input("Ingrese el codigo de la canción que va a eliminar: ")
+
+            if cedula.isdigit() and codigo.isdigit():
+                lista.cedula_cliente = int(cedula)
+                lista.codigo_cancion = int(codigo)
+
+                del cedula, codigo  # Se borran las variables que no se van a utilizar
+
+                # Llama al metodo que actualiza el usuario en la base de datos
+                cambios = lista.borrar_cancion_lista(con, cur)
+
+                # Verifica si se realizaron cambios en la base de datos
+                if cambios != 0:
+                    print("\nCancion eliminada con exito.")
+                else:
+                    print("\nEl cliente no tiene agregada la canción a su lista, no se han realizado cambios.")
+
 
         elif case == "5":
-            pass
+            # Eliminar lista de canciones especificada por la cedula
+            cedula = input("\nIngrese la cedula del cliente que corresponde a la lista: ")
+
+            if cedula.isdigit():
+                lista.cedula_cliente = int(cedula)
+
+                del cedula  # Se borra la variable que no se va a utilizar
+
+                # Llama al metodo que actualiza el usuario en la base de datos
+                cambios = lista.borrar_lista_especifica(con, cur)
+
+                # Verifica si se realizaron cambios en la base de datos
+                if cambios != 0:
+                    print("\nLista de canciones eliminada con exito.")
+                else:
+                    print("\nEl cliente no tiene una lista de canciones, no se han realizado cambios.")
+
 
         elif case == "6":
-            pass
+            # Eliminar datos completos de la tabla lista canciones
+            bandera = input("Esta seguro que desea realizar esta acción, los datos se perderan (S/n): ")
+
+            # Bandera logica por si se quiere ordenar un campo
+            if bandera == "S" or bandera == "s":
+                cambios = lista.borrar_lista_general(con, cur)
+
+                # Verifica si se realizaron cambios en la base de datos
+                if cambios != 0:
+                    print("\nTodos los datos de la tabla cliente han sidos eliminados.")
+                else:
+                    print("\nAlgo ha ido mal, no se han realizado cambios.")
+
 
         elif case == "7":
             pass
+
 
         elif case == "8":
             pass
@@ -236,17 +359,3 @@ if __name__ == "__main__":
     cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
 
     menu_lista_canciones(conexion, cursor)
-
-    # mi_lista = lst1.consulta_lista_especifica(cur, lst1.cedula_cliente)
-    # lst1.enviar_lista_canciones("Camilo", "camilo.londonom@gmail.com", mi_lista)
-
-
-
-    # print(lst1.consulta_lista_especifica(cur, lst1.cedula_cliente))
-
-    # print(lst1.consulta_lista_general(cur))
-    # print(lst1.consulta_lista_general(cur, "codigoCancion"))
-
-    # lst1.borrar_cancion_lista(con, cur)
-    # lst1.borrar_lista_especifica(con, cur)
-    # lst1.borrar_lista_general(con, cur)
