@@ -28,7 +28,7 @@ def crear_tablas(con, cur):
     # Comando para crear la tabla subscripciones con sus respectivos campos
     cur.execute(
         '''CREATE TABLE IF NOT EXISTS subscripciones (cedulaCliente INTEGER NOT NULL, codigoPlan INTEGER NOT NULL,
-        FOREIGN KEY (codigoPlan) REFERENCES planes (codigo), FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula))'''
+        FOREIGN KEY (codigoPlan) REFERENCES planes (codigo), FOREIGN KEY (cedulaCliente) REFERENCES cliente (cedula), UNIQUE (cedulaCliente))'''
     )
 
     # Comando para crear la tabla listaCanciones con sus respectivos campos

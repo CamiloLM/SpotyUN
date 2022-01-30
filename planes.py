@@ -1,19 +1,6 @@
-import sqlite3  # Modulo para realizar operaciones a la base de datos
 from prettytable import PrettyTable  # Módulo para hacer tablas bonitas
-import time  # Modulo que proporciona varias funciones útiles para manejar
-# las tareas relacionadas con el tiempo.
-
-
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea
-    una vacia."""
-    try:
-        """Retorna una conexón sqlite con la base de datos del programa."""
-        return sqlite3.connect('SpotyUN.db')
-    except sqlite3.Error:
-        """En caso de que suceda un error grave el programa atrapa e imprime el
-        error."""
-        print(sqlite3.Error)
+from sqlite3 import OperationalError
+import time  # Modulo que proporciona varias funciones útiles para manejar las tareas relacionadas con el tiempo.
 
 
 class Plan:
@@ -192,7 +179,7 @@ def menu_planes(con, cur):
             mi_tabla = PrettyTable()  # Crea el objeto tabla
             # Asgina los nombres de los campos en la tabla
             mi_tabla.field_names = [
-                "Código", "Nombre", "Valor", "Cantidad Canciones"]
+                "Código", "Nombre", "Valor", "Cantidad"]
             campo = "codigo"  # Campo por el que se va a ordenar
 
             # Bucle para poder ordenar las busquedas por campos
@@ -225,7 +212,7 @@ def menu_planes(con, cur):
                         print("\nLa tabla no tiene datos")
                         time.sleep(2.5)
                         break
-                except sqlite3.OperationalError:
+                except OperationalError:
                     print(
                         "\nLa tabla no cuenta con el campo que ha proporcionado.")
                     time.sleep(2.5)
@@ -284,7 +271,7 @@ def menu_planes(con, cur):
 
                 # Llama al metodo que actualiza el usuario en la base de datos
                 cambios = planes.actualizar_plan(
-                    conexion, cursor, datos1, datos2)
+                    con, cur, datos1, datos2)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -307,7 +294,7 @@ def menu_planes(con, cur):
 
                 # Llama al metodo que borra el plan en la base de datos
                 codigo = planes.getcodigo()
-                cambios = planes.borrar_plan(conexion, cursor, codigo)
+                cambios = planes.borrar_plan(con, cur, codigo)
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
                     print("\nPlan Nº ", codigo, " eliminado con exito.")
@@ -324,7 +311,7 @@ def menu_planes(con, cur):
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
-                cambios = planes.borrar_planes(conexion, cursor)
+                cambios = planes.borrar_planes(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
@@ -343,11 +330,3 @@ def menu_planes(con, cur):
         else:
             print("\nEntrada incorrecta. Por favor, intente de nuevo.")
             time.sleep(2.5)
-
-
-conexion = conexion_base_datos()
-# Almacena un objetos con la conexión a la base de datos.
-cursor = conexion.cursor()
-# Almacena un objeto cursor para realizar selecciones en la base da datos.
-
-menu_planes(conexion, cursor)

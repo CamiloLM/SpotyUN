@@ -1,6 +1,12 @@
 import sqlite3  # Modulo para realizar operaciones a la base de datos
-from create import crear_tablas
 from os import environ
+from create import crear_tablas
+from cliente import menu_cliente
+from administrador import menu_administrador
+from cancion import menu_cancion
+from planes import menu_planes
+from lista_canciones import menu_lista_canciones
+from subscripciones import menu_subscripción
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
 
@@ -37,22 +43,22 @@ if __name__ == "__main__":
 
         # Bloque logico donde se escogen las opciones principales del programa.
         if case == "1":
-            pass
+            menu_cliente(conexion, cursor)
 
         elif case == "2":
-            pass
+            menu_administrador(conexion, cursor)
 
         elif case == "3":
-            pass
+            menu_cancion(conexion, cursor)
 
         elif case == "4":
-            pass
+            menu_planes(conexion, cursor)
 
         elif case == "5":
             pass
 
         elif case == "6":
-            pass
+            menu_subscripción(conexion, cursor)
 
         elif case == "7":
             cursor.execute("SELECT name FROM sqlite_schema WHERE type='table'")  # Busca el nombre de todas las tablas.

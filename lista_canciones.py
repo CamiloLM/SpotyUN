@@ -208,6 +208,7 @@ def menu_lista_canciones(con, cur):
                     try:
                         # Llama a la funcion que agrega la cancion a la lista
                         cambios = lista.ingresar_cancion_lista(con, cur)
+                        
                         # Verifica si se realizaron cambios en la base de datos
                         if cambios != 0:
                             print("\nCanción agredaga con exito.")
@@ -255,7 +256,7 @@ def menu_lista_canciones(con, cur):
 
 
         elif case == "3":
-            # Consulta general de la lista de canciones por campo
+            # Consulta especifica de la lista de canciones por campo
             mi_tabla = PrettyTable()  # Crea el objeto tabla
             mi_tabla.field_names = ["Codigo", "Nombre", "Ubicación", "Género", "Album", "Interprete", "Fotografía"]
 
@@ -281,7 +282,7 @@ def menu_lista_canciones(con, cur):
                 else:
                     print("\nLa tabla no tiene datos")
             else:
-                print("\nEl valor de la cedula ingresado no es valido")
+                print("\nEl valor de la cedula ingresada no es valido")
 
 
         elif case == "4":

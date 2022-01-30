@@ -1,17 +1,7 @@
 from usuario import Usuario
 from prettytable import PrettyTable
 from datetime import date
-import sqlite3
-
-
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
-    try:
-        conn = sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
-        conn.execute("PRAGMA foreign_keys = 1")  # Activa la selectividad de las llaves foraneas.
-        return conn
-    except sqlite3.Error:
-        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
+from sqlite3 import OperationalError
 
 
 class Cliente(Usuario):
@@ -94,7 +84,7 @@ class Cliente(Usuario):
         return cur.fetchone()
 
 
-    def consulta_usuario_general(self, cur, campo="cedula") -> tuple:
+    def consulta_usuario_general(self, cur, campo="cedula") -> list:
         """
         Consulta todos los datos de la tabla cliente ordenandolos por el campo suministrado.
         Si no se proporciona uno, por defecto ordena por la cedula.
@@ -104,7 +94,7 @@ class Cliente(Usuario):
         campo (str): Nombre de la columna por la que se va a ordenar.
         
         Regresa:
-        datos_clientes (tuple): Tuple de listas con todos los datos de los clientes.
+        datos_clientes (list): Lista de tuplas con todos los datos de los clientes.
         """
         cur.execute("SELECT * FROM cliente ORDER BY {}".format(campo))
         return cur.fetchall()
@@ -266,7 +256,7 @@ def menu_cliente(con, cur):
                     else:
                         print("\nLa tabla no tiene datos")
                         break
-                except sqlite3.OperationalError:
+                except OperationalError:
                     print("\nLa tabla no cuenta con el campo que ha proporcionado.")
                     break
 
@@ -392,11 +382,3 @@ def menu_cliente(con, cur):
 
         else:
             print("\nEntrada incorrecta. Por favor, intente otra vez.")
-
-
-if __name__ == "__main__":
-    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
-    cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-
-    menu_cliente(conexion, cursor)
-    

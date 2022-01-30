@@ -1,16 +1,6 @@
 from usuario import Usuario
 from prettytable import PrettyTable
-import sqlite3
-
-
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
-    try:
-        conn = sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
-        conn.execute("PRAGMA foreign_keys = 1")  # Activa la selectividad de las llaves foraneas.
-        return conn
-    except sqlite3.Error:
-        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
+from sqlite3 import OperationalError
 
 
 class Administrador(Usuario):
@@ -218,7 +208,7 @@ def menu_administrador(con, cur):
                     else:
                         print("\nLa tabla no tiene datos")
                         break
-                except sqlite3.OperationalError:
+                except OperationalError:
                     print("\nLa tabla no cuenta con el campo que ha proporcionado.")
                     break
 
@@ -311,11 +301,3 @@ def menu_administrador(con, cur):
 
         else:
             print("\nEntrada incorrecta. Por favor, intente otra vez.")
-
-
-if __name__ == "__main__":
-    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
-    cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-    
-    menu_administrador(conexion, cursor)
-    

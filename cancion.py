@@ -1,12 +1,6 @@
-import sqlite3
+from sqlite3 import OperationalError
 from prettytable import PrettyTable
 
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
-    try:
-        return sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
-    except sqlite3.Error:
-        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
 
 class Cancion:
     def __init__(self):
@@ -119,10 +113,12 @@ class Cancion:
         con.commit()
         return cur.rowcount  
 
+
 def menu_cancion(con, cur):
     cancion = Cancion()
 
     while True:
+        # TODO: Buscar cancion por nombre
         print("\nSeleccione que opciones desea realizar:")
         print("1. Añadir nueva canción.")
         print("2. Consulta general canciones.")
@@ -191,7 +187,7 @@ def menu_cancion(con, cur):
                     else:
                         print("\nLa tabla no tiene datos")
                         break
-                except sqlite3.OperationalError:
+                except OperationalError:
                     print("\nLa tabla no cuenta con el campo que ha proporcionado.")
                     break
 
@@ -288,16 +284,3 @@ def menu_cancion(con, cur):
 
         else:
             print("\nEntrada incorrecta. Por favor, intente otra vez.")                       
-
-if __name__ == "__main__":
-    con = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
-    cur = con.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-    menu_cancion(con, cur)
-    # cancion = Cancion() 
-    # print(cancion)
-    # cancion.setCancion(["prueba","demomento","rock","nuevo","yo",None])
-    # cancion.setCodigo(1)
-    # print(cancion)
-    # cancion.borrar_cancion(con, cur, 1)
-    # cancion.borrar_canciones(con, cur)
-    # cancion.insertar_cancion(con, cur)           
