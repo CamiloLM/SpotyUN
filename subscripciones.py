@@ -1,6 +1,9 @@
 # La tabla de este objeto fue modificada, ahora uno de sus campos referencia al codigo del plan correspondiente.
 # No es un acambio grande solo hay que cambiar el nombre del campo en los execute.
+from operator import sub
 import sqlite3
+from prettytable import PrettyTable
+
 def conexion_base_datos():
     """Crea una conexión con la base de datos, si no existe se crea una vacia."""
     try:
@@ -9,14 +12,14 @@ def conexion_base_datos():
         print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
 
 class Subscripciones:
-    def __init__(self,cedulaCliente,codigoPlan):
-        self.cedulaCliente=cedulaCliente
-        self.codigoPlan=codigoPlan
+    def __init__(self):
+        self.cedulaCliente=None
+        self.codigoPlan=None
 
-    def setcodigo(self,codigo):
-         self.codigoPlan= codigo
-    def setCedula(self,cedula):
-         self.cedula = cedula    
+    # def setcodigo(self,codigo):
+    #      self.codigoPlan= codigo
+    # def setCedula(self,cedula):
+    #      self.cedula = cedula    
         
     def agregar_subscripcion(self, con, cur, datos):
         """
@@ -89,10 +92,170 @@ class Subscripciones:
         cur.execute("DELETE FROM subscripciones")
         con.commit()      
 
+def menu_subscripción(con, cur):
+    subscripciones = Subscripciones()
+
+    while True:
+        print("\nSeleccione que opciones desea realizar:")
+        print("1. Añadir nueva subscripción.")
+        print("2. Consulta general subscripciones.")
+        print("3. Consulta especifica subscripciones.")
+        print("4. Actualizar subscripción.")
+        print("5. Eliminar subscripción.")
+        print("6. Eliminar subscripciones")
+        print("0. Salir del programa.")
+        case = input()
+
+        if case == "1":
+            # Ingresando una nueva subscripción
+            cedulaCliente = input("\nIngrese su cedula : ")
+            codigoPlan = input("Ingrese codigo para el plan: ")
+
+            # Verficacion de que los datos que son ingresados son correctos
+            if cedulaCliente.isdigit() and codigoPlan.isdigit():
+                subscripciones.datos_cancion = [cedulaCliente, codigoPlan]  # Actualiza los datos del objeto subscripciones
+
+                # Se borran las variables que ya no se utilizan
+                del cedulaCliente, codigoPlan
+
+                # Llama al metodo para ingresar la subscripción en la base de datos
+                cambios = subscripciones.agregar_subscripcion(con, cur)
+
+                # Verifica si se realizaron cambios en la base de datos
+                if cambios != 0:
+                    print("\nSubscripción ingresada con exito.")
+                else:
+                    print("\nLa subscripción ya esta registrada, no se han realizado cambios.")
+            else:
+                print("\nAlguno de los datos que ingreso no son correctos")
+
+        elif case == "2":
+            # Consulta general de subscripciones por campo
+            mi_tabla = PrettyTable()  # Crea el objeto tabla
+            mi_tabla.field_names = ["cedulaCliente","codigoPlan"]  # Asgina los nombres de los campos en la tabla
+            campo = "cedulaCliente"  # Campo por el que se va a ordenar
+
+            # Bucle para poder ordenar las busquedas por campos
+            while True:
+                # Excepcion por si se ingresan campos que no esten en la tabla
+                try:
+                    # Busqueda en la tabla canción general pasando el campo por el que ordena
+                    datos_subscripciones = subscripciones.consulta_subscripciones(cur, campo)
+                    
+                    # Si la busqueda encuentra resultados estos se representan en la tabla
+                    if datos_subscripciones:
+                        mi_tabla.add_rows(datos_subscripciones)  # Añade datos las filas a la tabla
+                        print("")
+                        print(mi_tabla)
+                        bandera = input("Desea ordenar la busqueda por un campo (S/n): ")
+
+                        # Bandera logica por si se quiere ordenar un campo
+                        if bandera == "S" or bandera == "s":
+                            mi_tabla.clear_rows()  # Se limpia los datos en las filas
+                            entrada = input("Ingrese el campo por el que quiere ordenar la busqueda: ").lower()  # Entrada en minisculas
+                            campo = entrada.replace(" ", "")  # Si se ingresan espacios estos se remueven
+                        else:
+                            break
+                    else:
+                        print("\nLa tabla no tiene datos")
+                        break
+                except sqlite3.OperationalError:
+                    print("\nLa tabla no cuenta con el campo que ha proporcionado.")
+                    break
+        
+        elif case == "3":
+            # Consulta especifica de subscripciones por cedula
+            mi_tabla = PrettyTable()  # Crea el objeto tabla
+            mi_tabla.field_names = ["CedulaCliente", "codigoPlan"] # Asigna los nombres de los campos en la tabla
+
+            cedula = input("\nIngrese la cédula: ")
+            # Verficacion de los datos que son ingresados son correctos
+            if cedula.isdigit():
+                # Actualiza el codigo del objeto canción
+                subscripciones.codigo = int(cedula)
+                # Almacena todos los datos de la canción
+                datos_subscripcion = subscripciones.buscar_subscripcion(cur)
+
+                # Si la busqueda encuentra resultados estos se representan en la tabla
+                if datos_subscripcion:
+                    mi_tabla.add_row(datos_subscripcion)  # Añade datos las filas a la tabla
+                    print("")
+                    print(mi_tabla)
+                else:
+                    print("\nLa tabla no tiene datos")
+            else:
+                print("\nEl valor de la cedula ingresada no es valido")  
+
+        elif case == "4":
+            # Actualizar los datos de canción
+            print("\nIngrese los datos nuevos de la nueva canción")
+            cedulaCliente = input("\nIngrese su cédula: ")
+            codigoPlan = input("Ingrese codigo del plan: ")
+
+            print("\nIngrese la cedula de la subscripción que va a modificar:")
+            cedula = input()
+
+            # Verficacion de que los datos que son ingresados son correctos
+            if cedulaCliente.isdigit() and codigoPlan.isdigit():
+                subscripciones.datos_cancion = [cedulaCliente, codigoPlan]  # Actualiza los datos del objeto subscripciones
+
+                # Se borran las variables que ya no se utilizan
+                del cedulaCliente, codigoPlan
+
+                # Llama al metodo para ingresar la subscripción en la base de datos
+                cambios = subscripciones.actualizar_subscripcion(con, cur)
+
+                # Verifica si se realizaron cambios en la base de datos
+                if cambios != 0:
+                    print("\nActualización realizada con exito.")
+                else:
+                    print("\nEsa cédula no esta registrada, no se han realizado cambios.")
+        
+        elif case == "5":
+            # Eliminar datos especificos de la tabla subscripciones
+            print("\nIngrese la cédula de la subscripción que va a eliminar:")
+            cedula = input()
+
+            if cedula.isdigit():
+                cedula.cedula = int(cedula)
+
+                del cedula  # Se borra la variable que no se va a utilizar
+
+                # Llama al metodo que actualiza la subscripción en la base de datos
+                cambios = cedula.borrar_subscripcion(con, cur)
+
+                # Verifica si se realizaron cambios en la base de datos
+                if cambios != 0:
+                    print("\nSubscripción eliminada con exito.")
+                else:
+                    print("\nEsa cédula no esta registrada, no se han realizado cambios.") 
+
+        elif case == "6":
+            # Eliminar datos generales de la tabla subscripción
+            bandera = input("Esta seguro que desea realizar esta acción, los datos se perderan (S/n): ")
+
+            # Bandera logica por si se quiere ordenar un campo
+            if bandera == "S" or bandera == "s":
+                subscripciones = subscripciones.borrar_subscripciones(con, cur)
+
+                # Verifica si se realizaron cambios en la base de datos
+                if cambios != 0:
+                    print("\nTodos los datos de la tabla subscripciones han sidos eliminados.")
+                else:
+                    print("\nAlgo ha ido mal, no se han realizado cambios.")
+
+        elif case == "0":
+            print("\nSaliendo del menu subscripción.")
+            break
+
+        else:
+            print("\nEntrada incorrecta. Por favor, intente otra vez.")              
+
 if __name__ == "__main__":
     con = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
     cur = con.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-    subscripciones = Subscripciones(12345,1)
+    menu_subscripción(con, cur)
+    # subscripciones = Subscripciones(12345,1)
     # subscripciones.borrar_subscripciones(con, cur)
     # subscripciones.borrar_subscripcion(con, cur, 12346, 2)
     # subscripciones.setcodigo(3)
