@@ -1,19 +1,10 @@
-import sqlite3
-from sqlite3 import IntegrityError
+from sqlite3 import IntegrityError, OperationalError
 from prettytable import PrettyTable
 from correo import enviar_correo
+from player import reproductor
 from cancion import Cancion
+from cliente import Cliente
 # from planes import Plan
-
-
-def conexion_base_datos():
-    """Crea una conexión con la base de datos, si no existe se crea una vacia."""
-    try:
-        conn = sqlite3.connect('SpotyUN.db')  # Retorna una conexón sqlite con la base de datos del programa.
-        conn.execute("PRAGMA foreign_keys = 1")  # Activa la selectividad de las llaves foraneas.
-        return conn
-    except sqlite3.Error:
-        print(sqlite3.Error)  # En caso de que suceda un error grave el programa atrapa e imprime el error.
 
 
 class ListaCanciones():
@@ -24,7 +15,7 @@ class ListaCanciones():
 
     def __str__(self) -> str:
         return "Cedula: {}\nCodigo: {}".format(self.__cedula_cliente, self.__codigo_cancion)
-        
+
 
     @property
     def cedula_cliente(self) -> int:
@@ -141,29 +132,6 @@ class ListaCanciones():
         cur.execute("DELETE FROM listaCanciones")
         con.commit()
         return cur.rowcount
-    
-
-    def reproducir_lista_canciones(self, con, cur) -> None: pass
-    
-
-    def enviar_lista_canciones(self, nombre, correo, codigo_canciones) -> None:
-        """
-        Envia al correo del cliente los datos de su lista de canciones.
-
-        Parametros:
-        nombre (str): Nombre del cliente.
-        correo (str): Correo del cliente.
-        codigo_canciones (list): Lista con los codigos de su lista de canciones.
-        """
-        mi_tabla = PrettyTable()  # Crea el objeto tabla
-        mi_tabla.title = f"Canciones de la lista {nombre}"  # Asgina un titulo a la tabla
-        mi_tabla.field_names = ["No.", "Nombre", "Artista", "Album", "Genero"]  # Asgina los nombres de los campos en la tabla
-        
-        for codigo in codigo_canciones:
-            print(codigo[0])
-            # cancion = buscar_cancion_especifica(cur, codigo[0])
-            # mi_tabla.add_row([cancion[0], cancion[1], cancion[5], cancion[4], cancion[3]])
-            enviar_correo(correo, mi_tabla.get_html_string())
 
 
 def menu_lista_canciones(con, cur):
@@ -250,7 +218,7 @@ def menu_lista_canciones(con, cur):
                     else:
                         print("\nLa tabla no tiene datos")
                         break
-                except sqlite3.OperationalError:
+                except OperationalError:
                     print("\nLa tabla no cuenta con el campo que ha ingresado.")
                     break
 
@@ -341,22 +309,76 @@ def menu_lista_canciones(con, cur):
 
 
         elif case == "7":
-            pass
+            # Envia al correo del cliente los datos de su lista de canciones.
+            cedula = input("Ingrese la cedula del cliente: ")
+            
+            if cedula.isdigit():
+                cedula = int(cedula)
+                # Consulta si el cliente tiene canciones agregadas en la lista
+                datos_lista = lista.consulta_lista_especifica(cur, cedula)
+                if datos_lista:
+                    # Creacion del objeto cliente para realizar busquedas
+                    cliente = Cliente()
+                    cliente.cedula = cedula
+                    # Consulta de datos del cliente por la cedula suministrada
+                    datos_cliente = cliente.consulta_usuario_especifica(cur)
+                    
+                    # Creacion de la tabla que se va a enviar
+                    mi_tabla = PrettyTable()  # Crea el objeto tabla
+                    mi_tabla.title = f"Lista de canciones de {datos_cliente[1]} {datos_cliente[2]}"  # Asgina un titulo a la tabla
+                    mi_tabla.field_names = ["No.", "Nombre", "Artista", "Album", "Genero"]  # Asgina los nombres de los campos en la tabla
+
+                    # Creacion del objeto canción para realizar busquedas
+                    cancion = Cancion()
+                    # Itera en una lista compresible los codigos de las canciones
+                    for codigo in [elem[1] for elem in datos_lista]:
+                        cancion.codigo = codigo
+                        # Consulta de la información de las canciones
+                        datos_cancion = cancion.buscar_cancion_especifica(cur)
+                        mi_tabla.add_row([datos_cancion[0], datos_cancion[1], datos_cancion[5], datos_cancion[4], datos_cancion[3]])
+
+                    del cedula, cliente, datos_cliente, cancion, datos_cancion
+                    # Consulta si pudo realizar el envio del mensaje
+                    envio = enviar_correo(datos_cliente[3], mi_tabla.get_html_string())
+                    if envio:
+                        print("\nCorreo enviado con exito.")
+                    else:
+                        print("\nNo se pudo enviar el correo, las credenciales no fueron aceptadas")
+                else:
+                    print("\nEl cliente no tiene canciones agregadas")
+            else:
+                print("\nLa cedula que ingreso no es correcta.")
 
 
         elif case == "8":
-            pass
+            # Reprodución de las canciones almacenadas en la lista
+            # TODO: Comprobar que pasa si la cancion no tiene una ubicacion
+            cedula = input("Ingrese la cedula del cliente: ")
+            
+            # Verificancion de que la entrada es un entero positivo
+            if cedula.isdigit():
+                cedula = int(cedula)
+                # Consulta si el cliente tiene canciones agregadas en la lista
+                datos_lista = lista.consulta_lista_especifica(cur, cedula)
+                if datos_lista:
+                    lista_cancion = []  # Lista para almacenar los datos de las canciones
+                    cancion = Cancion()
+                    for codigo in [elem[1] for elem in datos_lista]:
+                        cancion.codigo = codigo
+                        # Consulta de la informacion de cada cancion
+                        lista_cancion.append(cancion.buscar_cancion_especifica(cur))
+                    # Se envia la lista completa de canciones al reproductor
+                    reproductor(lista_cancion)
+                else:
+                    print("\nEl cliente no tiene canciones agregadas")
+            else:
+                print("\nLa cedula que ingreso no es correcta.")
+
 
         elif case == "0":
             print("\nSaliendo del menu lista canciones.")
             break
 
+
         else:
             print("\nEntrada incorrecta. Por favor, intente otra vez.")
-
-
-if __name__ == "__main__":
-    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
-    cursor = conexion.cursor()  # Almacena un objeto cursor para realizar selecciones en la base da datos.
-
-    menu_lista_canciones(conexion, cursor)

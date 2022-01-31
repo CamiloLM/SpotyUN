@@ -1,6 +1,5 @@
 # Este archivo maneja las operaciones para la reproduccion del audio
 from pygame import mixer  # Importa el reproductor de música del módulo Pygame
-# from crud.read import buscar_cancion_especifica
 
 
 def existencia(ruta_archivo):
@@ -25,69 +24,56 @@ def existencia(ruta_archivo):
         return False
 
 
-def reproductor(cur, cancion):
+def reproductor(lista_canciones):
     """
-    Reproduce una cancion usando la funcion Mixer de la libreria Pygame
+    Reproduce una cancion usando la funcion Mixer de la libreria Pygame.
 
     Parametros:
-    cur (sqlite3.Cursor): Necesario para cambiar de canción.
-    canción (list): Datos de la canción
+    lista_canciones (list): Lista con los datos de la canciones.
     """
-    mixer.init()
-    cancion_url = f"canciones/{cancion[2]}"
+    mixer.init()  # Inicia el reproductor
+    i = 0  # Variable para moverse entre la lista de canciones
+    cargada = False  # Determina si hay una cancion activa en el reproductor
+    while True:
+        if not cargada:
+            mixer.music.load(f"canciones/{lista_canciones[i][2]}")  # Carga cancion al reproductor
+            mixer.music.set_volume(0.2)  # Establece el volumen
+            mixer.music.play()  # La cancion se empieza a reproducir
+            cargada = True
 
-    # Verifica la existencia de la canción
-    if existencia(cancion_url):
-        print("Cargando canción...")
-        mixer.music.load(cancion_url)
-        mixer.music.set_volume(0.2)
-        mixer.music.play()
-        print(f"La cancion {cancion[1]} se esta reproduciendo.")
+        print(f"\nLa canción {lista_canciones[i][1]} esta seleccionada.")
+        print("Pulsar 'R' para reproducir")
+        print("Pulsar 'P' para pausar")
+        print("Pulsar 'N' para cambiar a la siguiente canción")
+        print("Pulsar 'B' para cambiar a la canción anterior")
+        print("Pulsar 'S' para salir")
 
-        # Bucle que maneja los controles de la canción
-        while True:
-            print("Pulsar 'P' para pausar")
-            print("Pulsar 'R' para reproducir")
-            # print("Pulsar 'E' para cambiar de canción")
-            print("Pulsar 'S' para salir")
+        opcion = input(">>> ")
 
-            opcion = input(">>> ")
+        if opcion == "P" or opcion == "p":
+            mixer.music.pause()  # Pausa la cancion
 
-            if opcion == "P" or opcion == "p":
-                print(f"La cancion {cancion[1]} se encuentra pausada.")
-                mixer.music.pause()
+        elif opcion == "R" or opcion == "r":
+            mixer.music.unpause()  # Despausa la cancion
 
-            elif opcion == "R" or opcion == "r":
-                print(f"La cancion {cancion[1]} se esta reproduciendo.")
-                mixer.music.unpause()
+        elif opcion == "N" or opcion == "n":
+            # Verifica que no se sale del rango de la lista
+            if i < len(lista_canciones)-1:
+                mixer.music.stop()  # Para la cancion y descarga la cancion
+                i += 1  # Pasa a la siguiente
+                cargada = False
+            else:
+                print("\nEsta es la ultima canción de la lista")
 
-            # elif opcion == "E" or opcion == "e":
-            #     mixer.music.stop()
-            #     print("Escriba el numero de la cancion que quiere reproducir:")
-            #     codigo = input()
+        elif opcion == "B" or opcion == "b":
+            # Verifica que no se sale del rango de la lista
+            if i > 0:
+                mixer.music.stop()  # Para la cancion y descarga la cancion
+                i -= 1  # Pasa a la anterior
+                cargada = False
+            else:
+                print("\nEsta es la primera canción de la lista")
 
-            #     # Verificación del input
-            #     if codigo.isdecimal():
-            #         codigo = int(codigo)
-            #         cancion = buscar_cancion_especifica(cur, codigo)  # Busca los datos en la BD
-            #         cancion_url = f"canciones/{cancion[2]}"
-
-            #         # Verifica nuevamente que la canción exista
-            #         if existencia(cancion_url):
-            #             print("Cargando canción...")
-            #             mixer.music.load(cancion_url)
-            #             mixer.music.set_volume(0.2)
-            #             mixer.music.play()
-            #             print(f"La cancion {cancion[1]} se esta reproduciendo.")
-            #         else:
-            #             print("No se encuentra la cancion.")
-            #             break
-            #     else:
-            #         print("El valor que ingreso no es un numero.")
-            #         break
-
-            elif opcion == "S" or opcion == "s":
-                mixer.music.stop()
-                break
-    else:
-        print("No se encuentra la cancion. Accion no realizada.")
+        elif opcion == "S" or opcion == "s":
+            mixer.music.stop()  # Para la cancion y descarga la cancion
+            break

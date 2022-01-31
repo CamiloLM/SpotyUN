@@ -55,7 +55,7 @@ if __name__ == "__main__":
             menu_planes(conexion, cursor)
 
         elif case == "5":
-            pass
+            menu_lista_canciones(conexion, cursor)
 
         elif case == "6":
             menu_subscripción(conexion, cursor)
