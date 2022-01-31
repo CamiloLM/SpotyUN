@@ -36,7 +36,7 @@ def reproductor(lista_canciones):
     cargada = False  # Determina si hay una cancion activa en el reproductor
     while True:
         if not cargada:
-            mixer.music.load(f"canciones/{lista_canciones[i][2]}")  # Carga cancion al reproductor
+            mixer.music.load(f"assets/canciones/{lista_canciones[i][2]}")  # Carga cancion al reproductor
             mixer.music.set_volume(0.2)  # Establece el volumen
             mixer.music.play()  # La cancion se empieza a reproducir
             cargada = True
