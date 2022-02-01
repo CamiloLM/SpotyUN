@@ -126,7 +126,7 @@ def menu_cancion(con, cur):
         print("4. Actualizar canción.")
         print("5. Eliminar canción.")
         print("6. Eliminar canciones.")
-        print("0. Salir del programa.")
+        print("0. Salir del menu canciones.")
         case = input()
 
         if case == "1":

@@ -140,7 +140,7 @@ def menu_planes(con, cur):
         print("4. Actualizar plan.")
         print("5. Eliminar plan específico.")
         print("6. Eliminar plan general.")
-        print("0. Salir del programa.")
+        print("0. Salir del menu planes.")
         case = input()
         time.sleep(2.5)
 

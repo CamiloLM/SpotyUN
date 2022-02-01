@@ -192,7 +192,7 @@ def menu_cliente(con, cur):
         print("5. Actualizar pago cliente.")
         print("6. Eliminar cliente especifico.")
         print("7. Eliminar cliente general.")
-        print("0. Salir del programa.")
+        print("0. Salir del menu cliente.")
         case = input()
 
         if case == "1":

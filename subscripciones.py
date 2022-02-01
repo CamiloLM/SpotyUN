@@ -143,7 +143,7 @@ def menu_subscripción(con, cur):
         print("4. Actualizar subscripción.")
         print("5. Eliminar subscripción.")
         print("6. Eliminar subscripciones")
-        print("0. Salir del programa.")
+        print("0. Salir del menu subscripciones.")
         case = input()
 
 

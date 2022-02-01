@@ -4,7 +4,8 @@ from correo import enviar_correo
 from player import reproductor
 from cancion import Cancion
 from cliente import Cliente
-# from planes import Plan
+from planes import Plan
+from subscripciones import Subscripciones
 
 
 class ListaCanciones():
@@ -147,7 +148,7 @@ def menu_lista_canciones(con, cur):
         print("6. Eliminar tabla lista de canciones.")
         print("7. Enviar lista al correo electronico.")
         print("8. Reproducir lista de canciones.")
-        print("0. Salir del programa.")
+        print("0. Salir del menu lista canciones.")
         case = input()
 
 
@@ -161,31 +162,45 @@ def menu_lista_canciones(con, cur):
                 cedula = int(cedula)
                 codigo = int(codigo)
                 
-                # TODO: Consultar el limite de canciones del cliente
-                # Verifica que el usuario no tenga la cancion ya agregada a la lista
+                # Lista con toda la informacion del cliente
                 datos_lista = lista.consulta_lista_especifica(cur, cedula)
-                if codigo not in (elem for datos_cancion in datos_lista for elem in datos_cancion):
-                    # Se asignan los valores al objeto lista
-                    lista.cedula_cliente = cedula
-                    lista.codigo_cancion = codigo
 
-                    # Borrar las entradas ya que no se necesitan
-                    del cedula, codigo
+                # Consulta si el tamaño de la lista es mayor que el limite del plan
+                subs = Subscripciones()
+                subs.cedulaCliente = cedula
+                info_sub = subs.consulta_subscripcion_especifica(cur)
+                if info_sub:
+                    plan = Plan()
+                    plan.setcodigo(info_sub[1])
+                    info_plan = plan.consulta_plan_especifica(cur)
+                    if len(datos_lista) < info_plan[3]:
+                        # Verifica que el usuario no tenga la cancion ya agregada a la lista
+                        if codigo not in (elem for datos_cancion in datos_lista for elem in datos_cancion):
+                            # Se asignan los valores al objeto lista
+                            lista.cedula_cliente = cedula
+                            lista.codigo_cancion = codigo
 
-                    # Excepcion por si los datos no estan en la tabla cliente y cancion
-                    try:
-                        # Llama a la funcion que agrega la cancion a la lista
-                        cambios = lista.ingresar_cancion_lista(con, cur)
-                        
-                        # Verifica si se realizaron cambios en la base de datos
-                        if cambios != 0:
-                            print("\nCanción agredaga con exito.")
-                    except IntegrityError:
-                        print("Los datos ingresados no corresponden a ningun cliente o canción.")
+                            # Borrar las entradas ya que no se necesitan
+                            del cedula, codigo, subs, plan, info_sub, info_plan, datos_lista
+
+                            # Excepcion por si los datos no estan en la tabla cliente y cancion
+                            try:
+                                # Llama a la funcion que agrega la cancion a la lista
+                                cambios = lista.ingresar_cancion_lista(con, cur)
+                                
+                                # Verifica si se realizaron cambios en la base de datos
+                                if cambios != 0:
+                                    print("\nCanción agredaga con exito.")
+                            except IntegrityError:
+                                print("\nLos datos ingresados no corresponden a ningun cliente o canción.")
+                        else:
+                            print("\nLa canción que ingreso ya ha sido agregada")
+                    else:
+                        print("\nHa alcanzado el limite de canciones por plan.")
                 else:
-                    print("La canción que ingreso ya ha sido agregada")
+                    print("\nEl cliente ingresado no tiene una subscripcion asignada.")
             else:
-                print("Los datos que ingreso no son correctos, ingrese enteros positivos.")
+                print("\nLos datos que ingreso no son correctos, ingrese enteros positivos.")
 
 
         elif case == "2":

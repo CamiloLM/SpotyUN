@@ -149,7 +149,7 @@ def menu_administrador(con, cur):
         print("4. Actualizar administrador.")
         print("5. Eliminar administrador especifico.")
         print("6. Eliminar administrador general.")
-        print("0. Salir del programa.")
+        print("0. Salir del menu administrador.")
         case = input()
 
 
