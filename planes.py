@@ -152,7 +152,7 @@ def menu_planes(con, cur):
             cantidad = input("Ingrese la cantidad de canciones: ")
 
             # Verficacion de que los datos que son ingresados son correctos
-            if codigo.isdigit() and nombre.isalpha() and valor.isdecimal() and cantidad.isdigit():
+            if codigo.isdigit() and nombre.isalpha() and cantidad.isdigit():
                 # Actualiza los datos usuario del objeto admin
                 planes.setdatos(codigo, nombre, valor, cantidad)
                 datos = planes.getdatos()
@@ -258,7 +258,7 @@ def menu_planes(con, cur):
             codigo = input()
 
             # Verficacion de que los datos que son ingresados son correctos
-            if codigo.isdigit() and nombre.isalpha() and valor.isdigit() and cantidad.isdigit():
+            if codigo.isdigit() and nombre.isalpha() and cantidad.isdigit():
                 # Actualiza la cedula del objeto admin
                 planes.setcodigo(int(codigo))
                 datos2 = planes.getcodigo()

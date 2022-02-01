@@ -1,5 +1,7 @@
 # Este archivo maneja las operaciones para la reproduccion del audio
 from pygame import mixer  # Importa el reproductor de música del módulo Pygame
+from os import environ  # Importa funcion para modificar las variables de entorno
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
 
 
 def existencia(ruta_archivo):
