@@ -352,9 +352,9 @@ def menu_lista_canciones(con, cur):
                         datos_cancion = cancion.buscar_cancion_especifica(cur)
                         mi_tabla.add_row([datos_cancion[0], datos_cancion[1], datos_cancion[5], datos_cancion[4], datos_cancion[3]])
 
-                    del cedula, cliente, datos_cliente, cancion, datos_cancion
                     # Consulta si pudo realizar el envio del mensaje
                     envio = enviar_correo(datos_cliente[3], mi_tabla.get_html_string())
+                    del cedula, cliente, datos_cliente, cancion, datos_cancion
                     if envio:
                         print("\nCorreo enviado con exito.")
                     else:
