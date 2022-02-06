@@ -1,22 +1,22 @@
 from prettytable import PrettyTable  # Módulo para hacer tablas bonitas
-from sqlite3 import OperationalError
-import time  # Modulo que proporciona varias funciones útiles para manejar las tareas relacionadas con el tiempo.
+from sqlite3 import OperationalError, IntegrityError
 
 
 class Plan:
     def __init__(self):
         """Método constructor, inicializa los argumentos del objeto 'Plan'."""
-        self.__codigo = ""
-        self.__nombre = ""
-        self.__valor = ""
-        self.__cantidad = ""
+        self.__codigo = None
+        self.__nombre = None
+        self.__valor = None
+        self.__cantidad = None
 
-    def setdatos(self, codigo, nombre, valor, cantidad):
+
+    def setdatos(self, nombre, valor, cantidad):
         """Método para leer el valor de los datos/argumentos privados."""
-        self.__codigo = codigo
         self.__nombre = nombre
         self.__valor = valor
         self.__cantidad = cantidad
+
 
     def setactualizar(self, nombre, valor, cantidad):
         """Método para leer el valor de los datos/argumentos privados."""
@@ -24,9 +24,11 @@ class Plan:
         self.__valor = valor
         self.__cantidad = cantidad
 
+
     def setcodigo(self, codigo):
         """Método para leer el código"""
         self.__codigo = codigo
+
 
     def getdatos(self):
         """Método se emplea para obtener los datos/argumentos privados de la
@@ -34,15 +36,18 @@ class Plan:
         """
         return [self.__codigo, self.__nombre, self.__valor, self.__cantidad]
 
+
     def getactualizar(self):
         """Método se emplea para obtener los datos/argumentos privados de la
         clase.
         """
         return [self.__nombre, self.__valor, self.__cantidad]
 
+
     def getcodigo(self):
         """Método se emplea para obtener el código"""
         return [self.__codigo]
+
 
     def consulta_planes_general(self, cur, campo="codigo") -> tuple:
         """Consulta todos los datos de la tabla planes ordenándolos por el campo suministrado.
@@ -58,6 +63,7 @@ class Plan:
         cur.execute("SELECT * FROM planes ORDER BY {}".format(campo))
         return cur.fetchall()
 
+
     def consulta_plan_especifica(self, cur) -> tuple:
         """
         Consulta un plan por su nombre.
@@ -70,19 +76,20 @@ class Plan:
         cur.execute("SELECT * FROM planes WHERE codigo = ?", datos)
         return cur.fetchone()
 
-    def registrar_plan(self, con, cur, planes):
+
+    def registrar_plan(self, con, cur, datos):
         """
         Ingresa multiples datos en la tabla planes.
 
         Parametros:
         con(sqlite3.Connection): Conexion a la base de datos.
         cur(sqlite3.Cursor): Cursor para realizar las operaciones.
-        planes(list): Lista con los datos de los planes.
+        datos(list): Lista con los datos de los planes.
         """
-        cur.executemany(
-            "INSERT OR IGNORE INTO planes VALUES (?, ?, ?, ?)", [planes])
+        cur.execute("INSERT OR IGNORE INTO planes VALUES (?, ?, ?, ?)", datos)
         con.commit()
         return cur.rowcount
+
 
     def actualizar_plan(self, con, cur, planes, codigo):
         """
@@ -103,6 +110,7 @@ class Plan:
         con.commit()
         return cur.rowcount
 
+
     def borrar_plan(self, con, cur, codigo):
         """
         Borra un regristro en la tabla planes.
@@ -116,6 +124,7 @@ class Plan:
         cur.execute("DELETE FROM planes WHERE codigo = ?", codigo)
         con.commit()
         return cur.rowcount
+
 
     def borrar_planes(self, con, cur):
         """
@@ -142,37 +151,32 @@ def menu_planes(con, cur):
         print("6. Eliminar plan general.")
         print("0. Salir del menu planes.")
         case = input()
-        time.sleep(2.5)
 
         if case == "1":
             # Ingresando un nuevo plan
-            codigo = input("\nIngrese el código: ")
-            nombre = input("Ingrese nombre: ")
-            valor = input("Ingrese el valor: ")
-            cantidad = input("Ingrese la cantidad de canciones: ")
+            nombre = input("\nIngrese nombre: ").strip()
+            valor = input("Ingrese el valor: ").strip()
+            cantidad = input("Ingrese la cantidad de canciones: ").strip()
 
             # Verficacion de que los datos que son ingresados son correctos
-            if codigo.isdigit() and nombre.isalpha() and cantidad.isdigit():
+            if nombre.isalpha() and valor and cantidad.isdigit():
                 # Actualiza los datos usuario del objeto admin
-                planes.setdatos(codigo, nombre, valor, cantidad)
+                planes.setdatos(nombre, valor, cantidad)
                 datos = planes.getdatos()
 
                 # Se borran las variables que ya no se utilizan
-                del codigo, nombre, valor, cantidad
+                del nombre, valor, cantidad
                 # Llama al metodo para registrar el plan en la base de datos
                 cambios = planes.registrar_plan(con, cur, datos)
 
                 # Verifica si se realizaron cambios en la base de datos
-                if cambios != 0:
+                if cambios > 0:
                     print("\nPlan ingresado con exito.")
-                    time.sleep(2.5)
                 else:
                     print(
                         "\nEl plan ya está registrado, no se han realizado cambios.")
-                    time.sleep(2.5)
             else:
                 print("\nAlguno de los datos que ingreso no son correctos")
-                time.sleep(2.5)
 
         elif case == "2":
             # Consulta general de administradores por campo
@@ -196,7 +200,6 @@ def menu_planes(con, cur):
                         mi_tabla.add_rows(datos_plan)
                         print("")
                         print(mi_tabla)
-                        time.sleep(3)
                         bandera = input(
                             "Desea ordenar la busqueda por un campo (S/n): ")
 
@@ -210,12 +213,10 @@ def menu_planes(con, cur):
                             break
                     else:
                         print("\nLa tabla no tiene datos")
-                        time.sleep(2.5)
                         break
                 except OperationalError:
                     print(
                         "\nLa tabla no cuenta con el campo que ha proporcionado.")
-                    time.sleep(2.5)
                     break
 
         elif case == "3":
@@ -239,26 +240,23 @@ def menu_planes(con, cur):
                     mi_tabla.add_row(datos_plan)
                     print("")
                     print(mi_tabla)
-                    time.sleep(3)
                 else:
                     print("\nLa tabla no tiene datos")
-                    time.sleep(2.5)
             else:
                 print("\nEl código ingresado no es valido")
-                time.sleep(2.5)
 
         elif case == "4":
             # Actualizar los datos del administrador
             print("\nIngrese los nuevos datos del plan.")
-            nombre = input("Nombre: ")
-            valor = input("Valor: ")
-            cantidad = input("Cantidad de canciones: ")
+            nombre = input("Nombre: ").strip()
+            valor = input("Valor: ").strip()
+            cantidad = input("Cantidad de canciones: ").strip()
 
             print("\nIngrese el código del plan que va a modificar:")
-            codigo = input()
+            codigo = input().strip()
 
             # Verficacion de que los datos que son ingresados son correctos
-            if codigo.isdigit() and nombre.isalpha() and cantidad.isdigit():
+            if codigo.isdigit() and nombre.isalpha() and valor and cantidad.isdigit():
                 # Actualiza la cedula del objeto admin
                 planes.setcodigo(int(codigo))
                 datos2 = planes.getcodigo()
@@ -276,11 +274,11 @@ def menu_planes(con, cur):
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
                     print("\nPlan actualizado con exito.")
-                    time.sleep(2.5)
                 else:
                     print(
                         "\nCódigo no registrado, no se han realizado cambios.")
-                    time.sleep(2.5)
+            else:
+                print("\nAlguno de los campos que ingreso esta vacio.")
 
         elif case == "5":
             # Eliminar datos especificos de la tabla planes
@@ -291,42 +289,41 @@ def menu_planes(con, cur):
                 planes.setcodigo(int(codigo))
 
                 del codigo  # Se borra la variable que no se va a utilizar
-
-                # Llama al metodo que borra el plan en la base de datos
                 codigo = planes.getcodigo()
-                cambios = planes.borrar_plan(con, cur, codigo)
-                # Verifica si se realizaron cambios en la base de datos
-                if cambios != 0:
-                    print("\nPlan Nº ", codigo, " eliminado con exito.")
-                    time.sleep(2.5)
-                else:
-                    print(
-                        "\nCódigo no registrado, no se han realizado cambios.")
-                    time.sleep(2.5)
+
+                try:
+                    # Llama al metodo que borra el plan en la base de datos
+                    cambios = planes.borrar_plan(con, cur, codigo)
+                    # Verifica si se realizaron cambios en la base de datos
+                    if cambios != 0:
+                        print("\nPlan Nº ", codigo, " eliminado con exito.")
+                    else:
+                        print(
+                            "\nCódigo no registrado, no se han realizado cambios.")
+                except IntegrityError:
+                    print("\nEl plan no se ha podido eliminar por que forma parte de una subscripción.")
 
         elif case == "6":
             # Eliminar datos generales de la tabla administrador
-            bandera = input(
-                "¿Está seguro que desea realizar esta acción, los datos se perderán (S/n): ")
+            bandera = input("¿Está seguro que desea realizar esta acción, los datos se perderan? (S/n): ")
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
                 cambios = planes.borrar_planes(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
-                if cambios != 0:
-                    print(
-                        "\nTodos los datos de la tabla planes han sidos eliminados.")
-                    time.sleep(2.5)
-                else:
-                    print("\nAlgo ha ido mal, no se han realizado cambios.")
-                    time.sleep(2.5)
+                try:
+                    if cambios != 0:
+                        print(
+                            "\nTodos los datos de la tabla planes han sidos eliminados.")
+                    else:
+                        print("\nAlgo ha ido mal, no se han realizado cambios.")
+                except IntegrityError:
+                    print("\nAlgun plan no se ha podido eliminar por que forma parte de una subscripción.")
 
         elif case == "0":
             print("\nSaliendo del menú planes.")
-            time.sleep(2.5)
             break
 
         else:
             print("\nEntrada incorrecta. Por favor, intente de nuevo.")
-            time.sleep(2.5)

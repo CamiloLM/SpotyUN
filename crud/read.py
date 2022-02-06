@@ -19,7 +19,6 @@ def buscar_cancion_nombre(cur, nombre):
     cur (sqlite3.Cursor): Cursor para realizar las operaciones.
     nombre (str): Nombre de la cancion.
     """
-    # TODO: Añadir limite de canciones a busqueda por nombre
     datos = [nombre + "%"]
     cur.execute("SELECT * FROM cancion WHERE nombre LIKE ?", datos)
     return cur.fetchall()

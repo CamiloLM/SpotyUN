@@ -283,7 +283,7 @@ def menu_administrador(con, cur):
 
         elif case == "6":
             # Eliminar datos generales de la tabla administrador
-            bandera = input("Esta seguro que desea realizar esta acción, los datos se perderan (S/n): ")
+            bandera = input("¿Está seguro que desea realizar esta acción, los datos se perderan? (S/n): ")
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":

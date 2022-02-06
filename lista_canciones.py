@@ -151,11 +151,10 @@ def menu_lista_canciones(con, cur):
         print("0. Salir del menu lista canciones.")
         case = input()
 
-
         if case == "1":
             # Añadir canción a una lista especificada por la cedula
-            cedula = input("Ingrese la cedula del cliente: ")
-            codigo = input("Ingrese el codigo de la canción: ")
+            cedula = input("\nIngrese la cedula del cliente: ").strip()
+            codigo = input("Ingrese el codigo de la canción: ").strip()
 
             # Verifica que las entradas sean enteros positivos
             if cedula.isdigit() and codigo.isdigit():
@@ -202,7 +201,6 @@ def menu_lista_canciones(con, cur):
             else:
                 print("\nLos datos que ingreso no son correctos, ingrese enteros positivos.")
 
-
         elif case == "2":
             # Consulta general de lista de canciones por campo
             mi_tabla = PrettyTable()  # Crea el objeto tabla
@@ -237,7 +235,6 @@ def menu_lista_canciones(con, cur):
                     print("\nLa tabla no cuenta con el campo que ha ingresado.")
                     break
 
-
         elif case == "3":
             # Consulta especifica de la lista de canciones por campo
             mi_tabla = PrettyTable()  # Crea el objeto tabla
@@ -267,7 +264,6 @@ def menu_lista_canciones(con, cur):
             else:
                 print("\nEl valor de la cedula ingresada no es valido")
 
-
         elif case == "4":
             # Eliminar canción a una lista especificada por la cedula
             cedula = input("\nIngrese la cedula del cliente que corresponde a la lista: ")
@@ -288,7 +284,6 @@ def menu_lista_canciones(con, cur):
                 else:
                     print("\nEl cliente no tiene agregada la canción a su lista, no se han realizado cambios.")
 
-
         elif case == "5":
             # Eliminar lista de canciones especificada por la cedula
             cedula = input("\nIngrese la cedula del cliente que corresponde a la lista: ")
@@ -307,10 +302,9 @@ def menu_lista_canciones(con, cur):
                 else:
                     print("\nEl cliente no tiene una lista de canciones, no se han realizado cambios.")
 
-
         elif case == "6":
             # Eliminar datos completos de la tabla lista canciones
-            bandera = input("Esta seguro que desea realizar esta acción, los datos se perderan (S/n): ")
+            bandera = input("¿Está seguro que desea realizar esta acción, los datos se perderan? (S/n): ")
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
@@ -321,7 +315,6 @@ def menu_lista_canciones(con, cur):
                     print("\nTodos los datos de la tabla cliente han sidos eliminados.")
                 else:
                     print("\nAlgo ha ido mal, no se han realizado cambios.")
-
 
         elif case == "7":
             # Envia al correo del cliente los datos de su lista de canciones.
@@ -364,10 +357,8 @@ def menu_lista_canciones(con, cur):
             else:
                 print("\nLa cedula que ingreso no es correcta.")
 
-
         elif case == "8":
             # Reprodución de las canciones almacenadas en la lista
-            # TODO: Comprobar que pasa si la cancion no tiene una ubicacion
             cedula = input("Ingrese la cedula del cliente: ")
             
             # Verificancion de que la entrada es un entero positivo
@@ -378,9 +369,10 @@ def menu_lista_canciones(con, cur):
                 if datos_lista:
                     lista_cancion = []  # Lista para almacenar los datos de las canciones
                     cancion = Cancion()
+                    # Recorre las canciones de la lista del cliente
                     for codigo in [elem[1] for elem in datos_lista]:
                         cancion.codigo = codigo
-                        # Consulta de la informacion de cada cancion
+                        # Consulta de la informacion de cada cancion y se agrega a la lista
                         lista_cancion.append(cancion.buscar_cancion_especifica(cur))
                     # Se envia la lista completa de canciones al reproductor
                     reproductor(lista_cancion)
@@ -389,11 +381,9 @@ def menu_lista_canciones(con, cur):
             else:
                 print("\nLa cedula que ingreso no es correcta.")
 
-
         elif case == "0":
             print("\nSaliendo del menu lista canciones.")
             break
-
 
         else:
             print("\nEntrada incorrecta. Por favor, intente otra vez.")

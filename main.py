@@ -1,5 +1,6 @@
 import sqlite3  # Modulo para realizar operaciones a la base de datos
-from create import crear_tablas
+from create import crear_tablas  # Función para crear las tablas
+# Se importan los menus de cada uno de los objetos
 from cliente import menu_cliente
 from administrador import menu_administrador
 from cancion import menu_cancion
@@ -25,7 +26,8 @@ if __name__ == "__main__":
     print("║ Bienvenido al Programa SpotyUN ║")
     print("╚" + "═"*32 + "╝")
 
-    conexion = conexion_base_datos()  # Almacena un objetos con la conexión a la base de datos.
+    # Almacena un objeto con la conexión a la base de datos.
+    conexion = conexion_base_datos()
     # Almacena un objeto cursor para realizar selecciones en la base da datos.
     cursor = conexion.cursor()
 
@@ -43,41 +45,47 @@ if __name__ == "__main__":
 
         # Bloque logico donde se escogen las opciones principales del programa.
         if case == "1":
+            # Llamada al menu cliente para hacer realizar operaciones
             menu_cliente(conexion, cursor)
 
         elif case == "2":
+            # Llamada al menu administrador para hacer realizar operaciones
             menu_administrador(conexion, cursor)
 
         elif case == "3":
+            # Llamada al menu cancion para hacer realizar operaciones
             menu_cancion(conexion, cursor)
 
         elif case == "4":
+            # Llamada al menu planes para hacer realizar operaciones
             menu_planes(conexion, cursor)
 
         elif case == "5":
+            # Llamada al menu lista canciones para hacer realizar operaciones
             menu_lista_canciones(conexion, cursor)
 
         elif case == "6":
+            # Llamada al menu subscripciones para hacer realizar operaciones
             menu_subscripción(conexion, cursor)
 
         elif case == "7":
-            # Busca el nombre de todas las tablas.
-            cursor.execute("SELECT name FROM sqlite_schema WHERE type='table'")
-            tablas = cursor.fetchall()  # El nombre queda guardado en la vatiable tablas.
+            # Almacena el nombre de las tablas usadas por el programa.
+            tablas = ("listaCanciones", "subscripciones", "administrador", "cancion", "cliente", "planes")
 
-            # Se ejecuta si hay tablas en la base de datos.
-            if tablas:
-                for tabla, in tablas:  # Recorre la lista de tablas para borrarla una a una.
-                    if tabla != "sqlite_sequence":  # No se puede borrar la tabla sqlite_sequence.
-                        sql = f"DROP TABLE {tabla}"
-                        cursor.execute(sql)  # Ejecuta el comando para borrar los datos de la tabla.
-                conexion.commit()  # Los cambios son llevados a cabo en la base de datos.
+            # Recorre las tablas para borrarlas por orden.
+            for nombre in tablas:
+                sql = f"DROP TABLE IF EXISTS {nombre}"  # Se crea la sentencia
+                cursor.execute(sql) # Elimina las tablas si no existen
+            cursor.execute("DELETE FROM SQLITE_SEQUENCE")  # Borra los indices de las llaves auto incrementables
+            conexion.commit()  # Los cambios son llevados a cabo en la base de datos.
 
-            crear_tablas(conexion, cursor)  # Crea las tablas del la base de datos si no existe.
+            # Crea las tablas del la base de datos si no existen.
+            crear_tablas(conexion, cursor)
             print("La base de datos ha sido creada desde cero.")
 
         elif case == "0":
             print("\nHasta Luego.")
+            # Se cierra la conexión con la base de datos
             conexion.close()
             break
 

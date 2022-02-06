@@ -1,7 +1,15 @@
 from usuario import Usuario
 from prettytable import PrettyTable
-from datetime import date
-from sqlite3 import OperationalError
+from datetime import datetime
+from sqlite3 import OperationalError, IntegrityError
+
+
+def validar_fecha(fecha):
+    try:
+        datetime.strptime(fecha, '%Y-%m-%d')
+        return True
+    except ValueError:
+        return False
 
 
 class Cliente(Usuario):
@@ -197,17 +205,17 @@ def menu_cliente(con, cur):
 
         if case == "1":
             # Ingresando un nuevo cliente
-            cedula = input("\nIngrese número de cedula: ")
-            nombre = input("Ingrese nombre: ")
+            cedula = input("\nIngrese número de cedula: ").strip()
+            nombre = input("Ingrese nombre: ").strip()
             apellido = input("Ingrese apellido: ")
-            correo = input("Ingrese correo electronico: ")
-            pais = input("Ingrese el nombre del pais donde habita: ")
-            ciudad = input("Ingrese el nombre de la ciudad donde habita: ")
-            telefono = input("Ingrese su numero telefono: ")
-            tarjeta_credito = input("Ingrese el numero de tarjeta de credito: ")
+            correo = input("Ingrese correo electronico: ").strip()
+            pais = input("Ingrese el nombre del pais donde habita: ").strip()
+            ciudad = input("Ingrese el nombre de la ciudad donde habita: ").strip()
+            telefono = input("Ingrese su numero telefono: ").strip()
+            tarjeta_credito = input("Ingrese el numero de tarjeta de credito: ").strip()
             
             # Verficacion de que los datos que son ingresados son correctos
-            if cedula.isdigit() and nombre.isalpha() and apellido.isalpha() and correo and telefono.isdigit() and tarjeta_credito.isdigit():
+            if cedula.isdigit() and nombre and apellido and correo and pais and ciudad and telefono.isdigit() and tarjeta_credito.isdigit():
                 cliente.cedula = int(cedula)  # Actualiza la cedula del objeto cliente
                 cliente.datos_usuario = [nombre, apellido, correo, pais, ciudad, int(telefono), int(tarjeta_credito)]  # Actualiza los datos usuario del objeto cliente
 
@@ -287,19 +295,19 @@ def menu_cliente(con, cur):
         elif case == "4":
             # Actualizar los datos del cliente
             print("\nIngrese los datos nuevos del cliente")
-            nombre = input("Nombre: ")
+            nombre = input("Nombre: ").strip()
             apellido = input("Apellido: ")
-            correo = input("Correo electronico: ")
-            pais = input("Pais: ")
-            ciudad = input("Ciudad: ")
-            telefono = input("Numero de telefono: ")
-            tarjeta_credito = input("Numero tarjeta de credito: ")
+            correo = input("Correo electronico: ").strip()
+            pais = input("Pais: ").strip()
+            ciudad = input("Ciudad: ").strip()
+            telefono = input("Numero de telefono: ").strip()
+            tarjeta_credito = input("Numero tarjeta de credito: ").strip()
 
             print("\nIngrese la cedula del cliente que va a modificar:")
             cedula = input()
 
             # Verficacion de que los datos que son ingresados son correctos
-            if cedula.isdigit() and nombre.isalpha() and apellido.isalpha() and telefono.isdigit() and tarjeta_credito.isdigit():                
+            if cedula.isdigit() and nombre and apellido and correo and pais and ciudad and telefono.isdigit() and tarjeta_credito.isdigit():
                 cliente.cedula = int(cedula)  # Actualiza la cedula del objeto cliente
                 cliente.datos_usuario = [nombre, apellido, correo, pais, ciudad, int(telefono), int(tarjeta_credito)]  # Actualiza los datos usuario del objeto cliente
 
@@ -314,25 +322,23 @@ def menu_cliente(con, cur):
                     print("\nActualización realizada con exito.")
                 else:
                     print("\nEsa cedula no esta registrada, no se han realizado cambios.")
+            else:
+                print("\nAlguno de los datos que ingreso no son correctos")
 
         elif case == "5":
             # Actualiza los datos del pago
             print("\nIngrese la cedula del cliente cuyo pago a actualizar:")
-            cedula = input()
+            cedula = input().strip()
+            print("Ingrese la nueva fecha de pago (formato YYYY-MM-DD):")
+            fecha = input().strip()
 
-            if cedula.isdigit():
-                fecha = date.today()  # Obtiene la fecha de hoy
-                # Calculos que le añaden seis meses a la fecha actual
-                mes = fecha.month + 5
-                año = fecha.year + mes // 12
-                mes = mes % 12 + 1
-                dia = fecha.day
-                nueva_fecha = date(año, mes, dia)  # Se crea la nueva fecha de pago
+            if cedula.isdigit() and validar_fecha(fecha):
+                # Asigna los datos al objeto cliente
                 cliente.cedula = int(cedula)
-                cliente.datos_pago = [nueva_fecha, 1]
+                cliente.datos_pago = [fecha, 1]
 
                 # Se borran las variables que ya no se utilizan
-                del cedula, fecha, mes, año, dia, nueva_fecha
+                del cedula, fecha
 
                 # Llama al metodo que actualiza el usuario en la base de datos
                 cambios = cliente.actualizar_datos_pago(con, cur)
@@ -342,6 +348,8 @@ def menu_cliente(con, cur):
                     print("\nInformación de pago realizada con exito.")
                 else:
                     print("\nEsa cedula no esta registrada, no se han realizado cambios.")
+            else:
+                print("\nLos datos ingresados no son correctos.")
 
         elif case == "6":
             # Eliminar datos especificos de la tabla cliente
@@ -353,28 +361,34 @@ def menu_cliente(con, cur):
 
                 del cedula  # Se borra la variable que no se va a utilizar
 
-                # Llama al metodo que actualiza el usuario en la base de datos
-                cambios = cliente.borrar_usuario_especifico(con, cur)
+                try:
+                    # Llama al metodo que actualiza el usuario en la base de datos
+                    cambios = cliente.borrar_usuario_especifico(con, cur)
 
-                # Verifica si se realizaron cambios en la base de datos
-                if cambios != 0:
-                    print("\nCliente eliminado con exito.")
-                else:
-                    print("\nEsa cedula no esta registrada, no se han realizado cambios.")
+                    # Verifica si se realizaron cambios en la base de datos
+                    if cambios != 0:
+                        print("\nCliente eliminado con exito.")
+                    else:
+                        print("\nEsa cedula no esta registrada, no se han realizado cambios.")
+                except IntegrityError:
+                    print("\nEl cliente no se ha podido eliminar por que tiene una lista o subscripcion.")
 
         elif case == "7":
             # Eliminar datos generales de la tabla cliente
-            bandera = input("Esta seguro que desea realizar esta acción, los datos se perderan (S/n): ")
+            bandera = input("¿Está seguro que desea realizar esta acción, los datos se perderan? (S/n): ")
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
-                cambios = cliente.borrar_usuario_general(con, cur)
+                try:
+                    cambios = cliente.borrar_usuario_general(con, cur)
 
-                # Verifica si se realizaron cambios en la base de datos
-                if cambios != 0:
-                    print("\nTodos los datos de la tabla cliente han sidos eliminados.")
-                else:
-                    print("\nAlgo ha ido mal, no se han realizado cambios.")
+                    # Verifica si se realizaron cambios en la base de datos
+                    if cambios != 0:
+                        print("\nTodos los datos de la tabla cliente han sidos eliminados.")
+                    else:
+                        print("\nAlgo ha ido mal, no se han realizado cambios.")
+                except IntegrityError:
+                    print("\nAlguna cliente no se ha podido eliminar por que tiene una lista o subscripcion.")
 
         elif case == "0":
             print("\nSaliendo del menu cliente.")

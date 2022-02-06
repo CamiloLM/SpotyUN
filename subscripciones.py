@@ -1,6 +1,25 @@
 from sqlite3 import IntegrityError, OperationalError
 from prettytable import PrettyTable
 from planes import Plan
+from cliente import Cliente
+from datetime import date
+
+
+def nueva_fecha() -> date:
+    """
+    Devuelve la fecha dentro de seis meses a partir de la fecha de hoy.
+
+    Regresa:
+    fecha (date): Nueva fecha
+    """
+    fecha_actual = date.today()  # Obtiene la fecha de hoy
+    # Calculos que le añaden seis meses a la fecha actual
+    mes = fecha_actual.month + 5
+    año = fecha_actual.year + mes // 12
+    mes = mes % 12 + 1
+    dia = fecha_actual.day
+    fecha = date(año, mes, dia)  # Se crea la nueva fecha
+    return fecha
 
 
 class Subscripciones:
@@ -149,15 +168,13 @@ def menu_subscripción(con, cur):
 
         if case == "1":
             # Ingresando una nueva subscripción
-            cedula = input("\nIngrese la cedula del cliente: ")
-            codigo = input("Ingrese codigo del plan: ")
+            cedula = input("\nIngrese la cedula del cliente: ").strip()
+            codigo = input("Ingrese codigo del plan: ").strip()
 
             # Verficacion de que los datos que son ingresados son correctos
             if cedula.isdigit() and codigo.isdigit():
                 subscripciones.cedulaCliente = int(cedula)
                 subscripciones.codigoPlan = int(codigo)
-                # Se borran las variables que ya no se utilizan
-                del cedula, codigo
 
                 # Excepcion por si los datos no estan en la tabla cliente y cancion
                 try:
@@ -166,6 +183,12 @@ def menu_subscripción(con, cur):
 
                     # Verifica si se realizaron cambios en la base de datos
                     if cambios != 0:
+                        # Crea el objeto cliente para actualizar los datos
+                        cliente = Cliente()
+                        # Setea los datos del pago
+                        cliente.cedula = int(cedula)
+                        cliente.datos_pago = [nueva_fecha(), 1]
+                        cliente.actualizar_datos_pago(con, cur)
                         print("\nSubscripción ingresada con exito.")
                     else:
                         print("\nLa subscripción ya esta registrada, no se han realizado cambios.")
@@ -173,7 +196,6 @@ def menu_subscripción(con, cur):
                         print("Los datos ingresados no corresponden a ningun cliente o plan.")
             else:
                 print("\nAlguno de los datos que ingreso no son correctos")
-
 
         elif case == "2":
             # Consulta general de subscripciones por campo
@@ -208,7 +230,6 @@ def menu_subscripción(con, cur):
                     print("\nLa tabla no cuenta con el campo que ha proporcionado.")
                     break
 
-
         elif case == "3":
             # Consulta especifica de subscripciones por cedula
             mi_tabla = PrettyTable()  # Crea el objeto tabla
@@ -237,30 +258,33 @@ def menu_subscripción(con, cur):
             else:
                 print("\nEl valor de la cedula ingresada no es valido")  
 
-
         elif case == "4":
             # Actualizar los datos de canción
             print("\nIngrese los datos nuevos de la nueva subscripción")
-            cedula = input("\nIngrese la cédula del cliente: ")
-            codigo = input("Ingrese el codigo del plan: ")
+            cedula = input("\nIngrese la cédula del cliente: ").strip()
+            codigo = input("Ingrese el codigo del plan: ").strip()
 
             # Verficacion de que los datos que son ingresados son correctos
             if cedula.isdigit() and codigo.isdigit():
                 subscripciones.cedulaCliente = int(cedula)
                 subscripciones.codigoPlan = int(codigo)
 
-                # Se borran las variables que ya no se utilizan
-                del cedula, codigo
-
                 # Llama al metodo para ingresar la subscripción en la base de datos
                 cambios = subscripciones.actualizar_subscripcion(con, cur)
 
                 # Verifica si se realizaron cambios en la base de datos
                 if cambios != 0:
+                    # Crea el objeto cliente para actualizar los datos
+                    cliente = Cliente()
+                    # Setea los datos del pago
+                    cliente.cedula = int(cedula)
+                    cliente.datos_pago = [nueva_fecha(), 1]
+                    cliente.actualizar_datos_pago(con, cur)
                     print("\nActualización realizada con exito.")
                 else:
                     print("\nEsa cédula no esta registrada, no se han realizado cambios.")
-
+            else:
+                print("\nAlguno de los datos que ingreso no son correctos")
 
         elif case == "5":
             # Eliminar datos especificos de la tabla subscripciones
@@ -280,10 +304,9 @@ def menu_subscripción(con, cur):
                 else:
                     print("\nEsa cédula no tiene un plan registrado, no se han realizado cambios.") 
 
-
         elif case == "6":
             # Eliminar datos generales de la tabla subscripción
-            bandera = input("Esta seguro que desea realizar esta acción, los datos se perderan (S/n): ")
+            bandera = input("¿Está seguro que desea realizar esta acción, los datos se perderan? (S/n): ")
 
             # Bandera logica por si se quiere ordenar un campo
             if bandera == "S" or bandera == "s":
@@ -295,11 +318,9 @@ def menu_subscripción(con, cur):
                 else:
                     print("\nAlgo ha ido mal, no se han realizado cambios.")
 
-
         elif case == "0":
             print("\nSaliendo del menu subscripción.")
             break
-
 
         else:
             print("\nEntrada incorrecta. Por favor, intente otra vez.")              

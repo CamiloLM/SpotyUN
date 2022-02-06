@@ -1,29 +1,8 @@
 # Este archivo maneja las operaciones para la reproduccion del audio
 from pygame import mixer  # Importa el reproductor de música del módulo Pygame
+from pygame import error  # Excepcion por si no se encuentra la cancion
 from os import environ  # Importa funcion para modificar las variables de entorno
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
-
-
-def existencia(ruta_archivo):
-    """
-    Comprueba la existencia de un archivo en el sistema.
-    
-    Parametros:
-    filePath (str): Direccion del archivo
-    
-    Regresa:
-    True (bool): Si encuentra el archivo
-    False (bool): Si NO encuentra el archivo, imprime el error.
-    """
-    try:
-        with open(ruta_archivo, 'r'):
-            return True
-    except FileNotFoundError as e:
-        print(e)
-        return False
-    except IOError as e:
-        print(e)
-        return False
 
 
 def reproductor(lista_canciones):
@@ -38,10 +17,15 @@ def reproductor(lista_canciones):
     cargada = False  # Determina si hay una cancion activa en el reproductor
     while True:
         if not cargada:
-            mixer.music.load(f"assets/canciones/{lista_canciones[i][2]}")  # Carga cancion al reproductor
-            mixer.music.set_volume(0.2)  # Establece el volumen
-            mixer.music.play()  # La cancion se empieza a reproducir
-            cargada = True
+            print("\nEl reproductor se esta iniciando...")
+            try:
+                mixer.music.load(f"assets/canciones/{lista_canciones[i][2]}")  # Carga cancion al reproductor
+                mixer.music.set_volume(0.2)  # Establece el volumen
+                mixer.music.play()  # La cancion se empieza a reproducir
+                cargada = True
+            except error:
+                print(f"\nNo se puede cargar el archivo '{lista_canciones[i][2]}'.")
+                break
 
         print(f"\nLa canción {lista_canciones[i][1]} esta seleccionada.")
         print("Pulsar 'R' para reproducir")
