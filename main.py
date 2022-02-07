@@ -4,7 +4,7 @@ from create import crear_tablas  # Función para crear las tablas
 from cliente import menu_cliente
 from administrador import menu_administrador
 from cancion import menu_cancion
-from planes import menu_planes
+from planesUI import ConBD, planes_app
 from lista_canciones import menu_lista_canciones
 from subscripciones import menu_subscripción
 
@@ -58,7 +58,8 @@ if __name__ == "__main__":
 
         elif case == "4":
             # Llamada al menu planes para hacer realizar operaciones
-            menu_planes(conexion, cursor)
+            ConBD()
+            planes_app()
 
         elif case == "5":
             # Llamada al menu lista canciones para hacer realizar operaciones
