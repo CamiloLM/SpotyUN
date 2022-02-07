@@ -40,7 +40,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <property name="iconSize">
        <size>
@@ -167,6 +167,37 @@
          </item>
          <item>
           <widget class="QPushButton" name="ConsultaRefresh">
+           <property name="text">
+            <string>REFRESCAR</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>ORDENAR</string>
+       </attribute>
+       <widget class="QWidget" name="layoutWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>551</width>
+          <height>331</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QTableView" name="SortTable">
+           <attribute name="horizontalHeaderDefaultSectionSize">
+            <number>138</number>
+           </attribute>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="SortRefresh">
            <property name="text">
             <string>REFRESCAR</string>
            </property>

@@ -37,10 +37,20 @@ class plan(QMainWindow):
 
         self.consultaModel = QSqlQueryModel(self)
         self.consultaModel.setQuery("select * from planes")
+        self.ConsultaTable.setSelectionBehavior(QTableView.SelectRows)
         self.ConsultaTable.setModel(self.consultaModel)
         self.ConsultaTable.verticalHeader().setVisible(False)
-        self.ConsultaTable.setSortingEnabled(True)
         """Métodos para la consulta de planes en la base de datos"""
+
+        self.filtrarModel = QSqlTableModel(self)
+        self.filtrarModel.setTable("planes")
+        self.filtrarModel.select()
+        self.SortTable.setEditTriggers(QTableView.NoEditTriggers)
+        self.SortTable.setSelectionBehavior(QTableView.SelectRows)
+        self.SortTable.setModel(self.filtrarModel)
+        self.SortTable.verticalHeader().setVisible(False)
+        self.SortTable.setSortingEnabled(True)
+        """Métodos para ordenar los planes de la base de datos."""
 
         self.borrarModel = QSqlTableModel(self)
         self.borrarModel.setTable("planes")
