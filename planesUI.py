@@ -102,6 +102,7 @@ class plan(QMainWindow):
         self.consultaModel.setQuery("select * from planes")
         self.borrarModel.select()
         self.actualizarModel.select()
+        self.filtrarModel.select()
 
     def onRegister_clicked(self):
         """Función para registrar planes en la bd."""
