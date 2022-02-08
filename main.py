@@ -1,12 +1,13 @@
 import sqlite3  # Modulo para realizar operaciones a la base de datos
 from create import crear_tablas  # Función para crear las tablas
 # Se importan los menus de cada uno de los objetos
-from cliente import menu_cliente
-from administrador import menu_administrador
-from cancion import menu_cancion
+from objetos.cliente import menu_cliente
+from objetos.administrador import menu_administrador
+from objetos.cancion import menu_cancion
+from objetos.lista_canciones import menu_lista_canciones
+from objetos.subscripciones import menu_subscripción
+from objetos.planes import menu_planes
 from planesUI import ConBD, planes_app
-from lista_canciones import menu_lista_canciones
-from subscripciones import menu_subscripción
 
 
 def conexion_base_datos():
@@ -58,6 +59,7 @@ if __name__ == "__main__":
 
         elif case == "4":
             # Llamada al menu planes para hacer realizar operaciones
+            # menu_planes(conexion, cursor)
             ConBD()
             planes_app()
 

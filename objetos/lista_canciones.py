@@ -1,11 +1,11 @@
 from sqlite3 import IntegrityError, OperationalError
 from prettytable import PrettyTable
+from objetos.cancion import Cancion
+from objetos.cliente import Cliente
+from objetos.planes import Plan
+from objetos.subscripciones import Subscripciones
 from correo import enviar_correo
 from player import reproductor
-from cancion import Cancion
-from cliente import Cliente
-from planes import Plan
-from subscripciones import Subscripciones
 
 
 class ListaCanciones():

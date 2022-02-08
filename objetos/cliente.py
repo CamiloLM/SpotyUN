@@ -1,4 +1,4 @@
-from usuario import Usuario
+from objetos.usuario import Usuario
 from prettytable import PrettyTable
 from datetime import datetime
 from sqlite3 import OperationalError, IntegrityError
