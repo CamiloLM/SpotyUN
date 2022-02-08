@@ -7,7 +7,7 @@ from objetos.cancion import menu_cancion
 from objetos.lista_canciones import menu_lista_canciones
 from objetos.subscripciones import menu_subscripción
 from objetos.planes import menu_planes
-from planesUI import ConBD, planes_app
+from user_interface.mainUI import mainui
 
 
 def conexion_base_datos():
@@ -39,8 +39,9 @@ if __name__ == "__main__":
         print("3. Cancion.")
         print("4. Planes.")
         print("5. Lista canciones.")
-        print("6. Subscripciones.")
+        print("6. Suscripciones.")
         print("7. Crear base de datos.")
+        print("8. Interfaz gráfica.")
         print("0. Salir del programa.")
         case = input()
 
@@ -59,9 +60,7 @@ if __name__ == "__main__":
 
         elif case == "4":
             # Llamada al menu planes para hacer realizar operaciones
-            # menu_planes(conexion, cursor)
-            ConBD()
-            planes_app()
+            menu_planes(conexion, cursor)
 
         elif case == "5":
             # Llamada al menu lista canciones para hacer realizar operaciones
@@ -85,6 +84,10 @@ if __name__ == "__main__":
             # Crea las tablas del la base de datos si no existen.
             crear_tablas(conexion, cursor)
             print("La base de datos ha sido creada desde cero.")
+
+        elif case == "8":
+            # Llamada a la interfaz gráfica para hacer realizar operaciones
+            mainui()
 
         elif case == "0":
             print("\nHasta Luego.")
