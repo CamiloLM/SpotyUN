@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtSql import *
 from user_interface.planesUI import plan
+from user_interface.cancionesUI import Cancion
+from user_interface.clienteUI import Cliente
 import sys
 
 def ConBD():
@@ -19,7 +21,11 @@ def planes_app():
     app = QApplication(sys.argv)
     app.setStyle("fusion")
     planes = plan()
+    # cancion = Cancion()
+    # cliente = Cliente()
     planes.show()
+    # cancion.show()
+    # cliente.show()
     sys.exit(app.exec_())
 
 def mainui():
