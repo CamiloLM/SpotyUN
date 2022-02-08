@@ -1,7 +1,7 @@
 from sqlite3 import IntegrityError, OperationalError
 from prettytable import PrettyTable
-from planes import Plan
-from cliente import Cliente
+from objetos.planes import Plan
+from objetos.cliente import Cliente
 from datetime import date
 
 
