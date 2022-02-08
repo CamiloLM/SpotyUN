@@ -81,6 +81,7 @@ class plan(QMainWindow):
         # Botón que al clickarse actualiza la información de la tabla de borrado.
         self.ActualizarRefresh.clicked.connect(self.onRefresh_clicked)
         # Botón que al clickarse actualiza la información de la tabla de update.
+        self.SortRefresh.clicked.connect(self.onRefresh_clicked)
         self.Registrar.clicked.connect(self.onRegister_clicked)
         # Botón que al clickarse ingresa un nuevo plan a la bd.
 
