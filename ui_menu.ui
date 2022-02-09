@@ -185,7 +185,7 @@ QTabBar::tab{
             <enum>QTabWidget::Rounded</enum>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="iconSize">
             <size>
@@ -283,6 +283,23 @@ color: rgb(255, 255, 255);</string>
                  <string notr="true">background-color: rgb(11, 31, 31);
 border-color: rgb(0, 0, 0);
 color: rgb(255, 255, 255);</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_50">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(235, 235, 235);</string>
+                </property>
+                <property name="text">
+                 <string>¿PAGÓ?:</string>
                 </property>
                </widget>
               </item>
@@ -701,23 +718,6 @@ color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="text">
                  <string>TELEFONO:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="QLabel" name="label_50">
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(235, 235, 235);</string>
-                </property>
-                <property name="text">
-                 <string>FECHA PAGO:</string>
                 </property>
                </widget>
               </item>
@@ -1469,7 +1469,7 @@ QTabBar::tab{
             <enum>QTabWidget::Rounded</enum>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="iconSize">
             <size>
@@ -2651,7 +2651,7 @@ QTabBar::tab{
             <enum>QTabWidget::Rounded</enum>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="iconSize">
             <size>
