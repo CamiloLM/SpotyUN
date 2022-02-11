@@ -8,6 +8,8 @@ from objetos.lista_canciones import menu_lista_canciones
 from objetos.subscripciones import menu_subscripción
 from objetos.planes import menu_planes
 from user_interface.mainUI import mainui
+from os import environ  # Importa funcion para modificar las variables de entorno
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"  # Oculta mensaje de Pygame
 
 
 def conexion_base_datos():

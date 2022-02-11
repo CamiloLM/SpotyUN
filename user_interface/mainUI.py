@@ -21,11 +21,11 @@ def planes_app():
     app = QApplication(sys.argv)
     app.setStyle("fusion")
     planes = plan()
-    # cancion = Cancion()
-    # cliente = Cliente()
-    planes.show()
+    cancion = Cancion()
+    cliente = Cliente()
+    # planes.show()
     # cancion.show()
-    # cliente.show()
+    cliente.show()
     sys.exit(app.exec_())
 
 def mainui():
